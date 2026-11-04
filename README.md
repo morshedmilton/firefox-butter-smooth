@@ -56,38 +56,15 @@ That reframes the whole guide:
 
 This is the whole reason steps 1–3 exist. In hybrid (Advanced Optimus) mode, Windows picks the GPU per program, and a browser usually gets the iGPU:
 
-```mermaid
-flowchart LR
-    A["Firefox content process"] --> B["Compositor · WebRender"]
-    B --> C{"Windows picks the GPU"}
-    C -->|"default: save power"| D["Intel UHD"]
-    C -->|"High performance"| E["RTX 4060"]
-    D --> F["Panel · 360 Hz"]
-    E --> F
-    classDef neutral fill:#141d2f,stroke:#55647e,color:#c9d2e3
-    classDef bad fill:#3b1620,stroke:#E5484D,color:#ffd7da
-    classDef good fill:#0f2a18,stroke:#3FB950,color:#d6f5de
-    class A,B,C,F neutral
-    class D bad
-    class E good
-```
+<div align="center">
+  <img src="assets/frame-path.svg" width="100%" alt="Frame path: Firefox content process to the compositor, then Windows chooses the GPU — Intel UHD by default, RTX 4060 when set to High performance, both feeding the 360 Hz panel">
+</div>
 
 And when it still stutters, this is the order that finds the cause:
 
-```mermaid
-flowchart TD
-    S["It feels stuttery"] --> R{"Panel at 360 Hz?"}
-    R -->|no| R1["Display → Advanced display"]:::fix
-    R -->|yes| C{"about:support: WebRender?"}
-    C -->|"WebRender (Software)"| C1["Driver + blocklist log"]:::fix
-    C -->|yes| G{"GPU #1 is the RTX?"}
-    G -->|no| G1["Graphics → High performance"]:::fix
-    G -->|yes| X{"Clean profile, no extensions?"}
-    X -->|no| X1["Extension diet · docs/06"]:::fix
-    X -->|yes| P["Profile the scroll · docs/07"]:::last
-    classDef fix fill:#3b1620,stroke:#E5484D,color:#ffd7da
-    classDef last fill:#0f2a18,stroke:#3FB950,color:#d6f5de
-```
+<div align="center">
+  <img src="assets/triage.svg" width="100%" alt="Triage order: check 360 Hz, then WebRender, then which GPU Firefox uses, then extensions, then profile the scroll">
+</div>
 
 ---
 
@@ -390,7 +367,7 @@ Renames `user.js` and the stylesheet aside, restores the newest `prefs.js` backu
 | [`user.js`](user.js) | ~50 commented lines — the tuned profile |
 | [`chrome/userChrome.css`](chrome/userChrome.css) | 4 rules that actually exist in Firefox |
 | [`scripts/`](scripts) | install + restore, with backup and a running-Firefox guard |
-| [`assets/`](assets) | the hero, impact and audit graphics (hand-written SVG) |
+| [`assets/`](assets) | hero, impact, audit, frame-path and triage graphics (hand-written SVG) |
 | [`docs/01`](docs/01-windows-and-driver.md) | refresh rate, GPU choice, HAGS, power plans |
 | [`docs/02`](docs/02-firefox-performance-settings.md) | the GUI step, done properly |
 | [`docs/03`](docs/03-about-config.md) | every pref: default, value, verdict |

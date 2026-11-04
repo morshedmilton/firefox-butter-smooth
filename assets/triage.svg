@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 300" width="1280" height="300" role="img" aria-label="Triage order: check 360 Hz, then WebRender, then which GPU Firefox uses, then extensions, then profile the scroll">
+  <defs>
+    <marker id="cheT" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10Z" fill="#55647E"/>
+    </marker>
+  </defs>
+
+  <rect width="1280" height="300" fill="#0B1220"/>
+  <rect width="1280" height="300" fill="none" stroke="#FFFFFF" stroke-opacity="0.06"/>
+
+  <text x="40" y="46" fill="#FFFFFF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="22" font-weight="800">Still stuttering? Run this in order.</text>
+  <text x="40" y="70" fill="#8FA0BF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14">Stop at the first check that fails. The fix on the second line is the whole answer.</text>
+
+  <!-- 1 -->
+  <g>
+    <rect x="40" y="104" width="210" height="92" rx="10" fill="#141D2F" stroke="#55647E"/>
+    <text x="56" y="130" fill="#6F7F99" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="700">CHECK 1</text>
+    <text x="56" y="152" fill="#E7ECF7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="700">360 Hz?</text>
+    <text x="56" y="174" fill="#E9A9AE" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5">Display &gt; Advanced display</text>
+  </g>
+  <path d="M254 150H278" stroke="#55647E" stroke-width="2" marker-end="url(#cheT)"/>
+
+  <!-- 2 -->
+  <g>
+    <rect x="287" y="104" width="210" height="92" rx="10" fill="#141D2F" stroke="#55647E"/>
+    <text x="303" y="130" fill="#6F7F99" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="700">CHECK 2</text>
+    <text x="303" y="152" fill="#E7ECF7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="700">WebRender?</text>
+    <text x="303" y="174" fill="#E9A9AE" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5">driver + blocklist log</text>
+  </g>
+  <path d="M501 150H525" stroke="#55647E" stroke-width="2" marker-end="url(#cheT)"/>
+
+  <!-- 3 -->
+  <g>
+    <rect x="534" y="104" width="210" height="92" rx="10" fill="#141D2F" stroke="#55647E"/>
+    <text x="550" y="130" fill="#6F7F99" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="700">CHECK 3</text>
+    <text x="550" y="152" fill="#E7ECF7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="700">RTX as GPU #1?</text>
+    <text x="550" y="174" fill="#E9A9AE" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5">Graphics &gt; High performance</text>
+  </g>
+  <path d="M748 150H772" stroke="#55647E" stroke-width="2" marker-end="url(#cheT)"/>
+
+  <!-- 4 -->
+  <g>
+    <rect x="781" y="104" width="210" height="92" rx="10" fill="#141D2F" stroke="#55647E"/>
+    <text x="797" y="130" fill="#6F7F99" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="700">CHECK 4</text>
+    <text x="797" y="152" fill="#E7ECF7" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="700">Clean profile?</text>
+    <text x="797" y="174" fill="#E9A9AE" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5">extension diet · docs/06</text>
+  </g>
+  <path d="M995 150H1019" stroke="#55647E" stroke-width="2" marker-end="url(#cheT)"/>
+
+  <!-- 5 -->
+  <g>
+    <rect x="1028" y="104" width="210" height="92" rx="10" fill="#0F2A18" stroke="#3FB950"/>
+    <text x="1044" y="130" fill="#6FAE80" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="700">THEN</text>
+    <text x="1044" y="152" fill="#D6F5DE" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="700">Profile the scroll</text>
+    <text x="1044" y="174" fill="#8FD6A2" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11.5">profiler · docs/07</text>
+  </g>
+
+  <text x="40" y="244" fill="#6F7F99" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">Four checks, thirty seconds each. In practice the answer is one of the first two about nine times out of ten.</text>
+</svg>
