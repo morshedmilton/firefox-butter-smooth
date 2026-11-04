@@ -80,6 +80,7 @@ Menus that feel slow because of *rendering*, not animation:
 |---|---|---|
 | Every interaction lags ~100 ms | software compositing | `about:support` → Compositing |
 | Lag only at 60 Hz but not at its max | panel refresh rate | [01](01-windows-and-driver.md) |
+| A panel shows empty content (extensions, bookmarks) | usually a pref, not this CSS | [09](09-troubleshooting.md#extensions-panel-is-empty) |
 | Lag only with 30 tabs open | process/RAM pressure | `about:processes` |
 | Lag only after waking from sleep | GPU driver after resume | [09](09-troubleshooting.md) |
 

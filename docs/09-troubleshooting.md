@@ -19,6 +19,44 @@ The browser has fallen back to CPU compositing. Nothing else you tune will matte
 
 ---
 
+## Extensions panel is empty
+
+**Symptom:** add-ons are installed and enabled in `about:addons`, maybe even pinned to the toolbar, but clicking
+the 🧩 puzzle icon shows the promo — *"A few extensions go a long way… Discover extensions"* — on every page,
+including normal https:// sites. Pinning, customising the toolbar and reinstalling the add-ons change nothing.
+
+**Cause (confirmed on Firefox 160.0b5):** `dom.ipc.processCount.extension` is set to something other than its
+default. It comes from old "speed up Firefox" lists that tell you to set it to `2` "to isolate extensions".
+Extensions are managed by Fission on current builds, and a forced legacy process count leaves the extension
+widgets unregistered — so the panel has nothing to mount and falls back to the promo.
+
+**Fix, in order:**
+
+1. Type `about:config` in the address bar → **Accept the Risk and Continue**.
+2. Search `dom.ipc.processCount.extension`.
+3. If the row exists and its value is **bold** (modified): click the **Reset** arrow on the right, or right-click → **Reset**.
+4. Close Firefox completely (`Ctrl + Shift + Esc`, no `firefox.exe` left), then reopen.
+5. Check the panel on a normal website — not on `about:addons`, where extensions are not allowed to draw UI.
+
+Ten seconds, and it is the whole fix.
+
+**What does not fix it.** All of these were tried first, in this order, before the real cause was found:
+
+| Attempt | Why it doesn't help |
+|:--|:--|
+| Switching to a normal page, pinning icons | treats the symptom — the panel is empty everywhere |
+| Customize → **Restore Defaults** | resets toolbar layout, not the extension registry |
+| Deleting `xulstore.json` | stores window size and toolbar layout, nothing about add-ons |
+| Deleting `extensions.json` + `addonStartup.json.lz4` | forces a registry rebuild; unnecessary, and it looks scarier than it is |
+| Resetting `browser.uiCustomization.state` | layout again |
+| Removing `userChrome.css` | was suspected; it was not the cause |
+| **Refresh Firefox** | last resort — keeps bookmarks and passwords, discards every pref |
+
+If the pref is already at its default and the panel is still empty, it is a genuine registry problem: use
+`about:support` → **Refresh Firefox**, then reinstall the add-ons.
+
+---
+
 ## Black flash / brief flicker when a game opens, or on alt-tab
 
 This is Optimus, not Firefox.

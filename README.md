@@ -309,6 +309,8 @@ Or let the script do it (it backs up `prefs.js` first):
 - Delete anything that injects CSS/DOM into every page: dark-mode forcers, font replacers, **"smooth scroll" extensions** (they reimplement scrolling in JS, outside APZ — always worse).
 - Keep filter lists lean: if you can't name a site the list fixed, it's costing you more than it earns.
 
+> **Empty 🧩 panel?** If the puzzle icon only ever shows *"A few extensions go a long way… Discover extensions"* while your add-ons are installed and working, it isn't an extension problem — an old optimization list set `dom.ipc.processCount.extension`. Reset that pref in `about:config`, restart, done. [Full case →](docs/09-troubleshooting.md#extensions-panel-is-empty)
+
 | ✅ Pros | ⚠️ Cons |
 |:--|:--|
 | Cheapest real CPU win in the list | One site will break and you'll blame the wrong thing |
