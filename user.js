@@ -133,7 +133,7 @@ user_pref("browser.compactmode.show", true);
 //
 //    gfx.webrender.all                       - WebRender is always on now
 //    layers.acceleration.force-enabled       - legacy Layers compositor, gone
-//    dom.ipc.processCount.extension          - pre-Fission, ignored
+//    dom.ipc.processCount.extension          - pre-Fission; empties the extensions panel (docs/09)
 //    gfx.content.azure.backends              - the Azure backend was removed
 //    content.notify.interval                 - micro-tuning, unmeasurable
 //    browser.tabs.remote.autostart           - multiprocess is mandatory

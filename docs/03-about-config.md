@@ -44,7 +44,7 @@ they are already correct in a healthy install. Check them with `about:support` r
 | `fission.autostart` | `true` | `true` | site isolation. Disabling is a security downgrade, not an optimisation | 🟢 |
 | `browser.tabs.unloadOnLowMemory` | `true` (Windows) | `true` | collapse background tabs under memory pressure instead of swapping | 🟢 |
 | `browser.sessionstore.interval` | `15000` | `60000` | how often session state hits disk, ms. Fewer writes; you lose ≤60 s of state on a hard crash | 🟡 |
-| `dom.ipc.processCount.extension` | — | — | pre-Fission. Extensions are processes regardless now | 🔴 |
+| `dom.ipc.processCount.extension` | — | — | pre-Fission, and on Beta a modified value can empty the extensions panel — [09](09-troubleshooting.md#extensions-panel-is-empty) | 🔴 |
 | `browser.tabs.remote.autostart` | `true` | — | multiprocess is mandatory. No-op | 🔴 |
 
 **Process maths:** 12 processes on 20 threads is fine. On 16 GB, 12 keeps ~3 GB of content resident, leaving

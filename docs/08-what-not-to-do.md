@@ -16,7 +16,6 @@ Firefox will happily store a pref that no code reads. No error, no warning, no e
 | `gfx.webrender.all` | WebRender became the only Windows compositor; there is nothing to "enable" |
 | `layers.acceleration.force-enabled` | belonged to the Layers compositor, replaced by WebRender |
 | `layers.acceleration.draw-fps` *(except the overlay)* | still exists — but as a measurement tool, not a speed-up; don't leave it on |
-| `dom.ipc.processCount.extension` | pre-Fission. Extensions already run isolated |
 | `browser.tabs.remote.autostart` | multiprocess is mandatory since Fission |
 | `gfx.content.azure.backends` | the Azure canvas backend was removed (now Skia/WebRender) |
 | `browser.ping-centre.telemetry` | the Ping Centre component was removed years ago |
@@ -35,6 +34,7 @@ forward. The prefs were correct then. Firefox is now a different engine.
 | `media.ffvpx.enabled = false` "forces GPU decoding" | It disables Firefox's bundled FFmpeg decoders for VP8/VP9/AV1 and some audio. On Windows, VP9 doesn't route through the OS decoder in the general case, so you mostly lose your fallback path — you do not gain hardware decode. **Leave it `true`.** |
 | `layout.frame_rate = 360` "matches your monitor" | `-1` already means "follow the display". Pinning an integer takes the compositor off the vsync/VRR path, which produces judder and tearing on high-refresh panels — and caps you at whatever number you typed. **Leave it `-1`.** |
 | "Disable all animations to speed up rendering" | CSS animations run on the compositor; they cost the GPU almost nothing. Killing them changes *feel*, not frame budget. Fine as a taste choice — dishonest as a performance claim. |
+| `dom.ipc.processCount.extension = 2` "isolates extensions from pages" | On Firefox 160 Beta it leaves the **extensions panel empty** — the puzzle icon shows only "A few extensions go a long way…" while every add-on is installed and enabled. Reset the pref. Case history: [09](09-troubleshooting.md#extensions-panel-is-empty). |
 
 The skeleton-UI one is the giveaway that a list was generated rather than tested: it reads as "disable early
 paint to start faster", which isn't a thing.

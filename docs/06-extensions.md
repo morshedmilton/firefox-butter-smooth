@@ -72,8 +72,10 @@ inevitable less painful.
 ## 6.6 Extension process isolation
 
 Older lists tell you to set `dom.ipc.processCount.extension` to 2 "to isolate extensions from pages". That pref
-belongs to the pre-Fission architecture: with site isolation, extensions already run in their own processes and
-the pref is ignored. See [08](08-what-not-to-do.md).
+belongs to the pre-Fission architecture, and on a current Beta build a modified value does more than nothing:
+it can leave the extensions panel empty, showing only "A few extensions go a long way…" while every add-on is
+installed and working. Leave it at default. If your panel is already empty, that is the first thing to reset —
+[09](09-troubleshooting.md#extensions-panel-is-empty).
 
 ## Checklist
 
