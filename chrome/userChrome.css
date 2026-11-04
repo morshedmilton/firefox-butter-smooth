@@ -1,0 +1,57 @@
+/* ==========================================================================
+   firefox-butter-smooth · chrome/userChrome.css
+
+   Requires, in about:config:
+     toolkit.legacyUserProfileCustomizations.stylesheets = true
+
+   Path: <profile>/chrome/userChrome.css
+   Restart Firefox completely (all windows) after editing.
+
+   What this is: Firefox's menu and panel animations are tuned for 60 Hz
+   displays. On a 360 Hz panel that fade reads as input lag. Killing the
+   durations makes menus appear on the same frame you click.
+
+   What this is NOT: a performance fix. It changes perceived latency, not
+   frame budget. Keep the file small - it is parsed on every window open.
+
+   Unsupported surface: Mozilla can rename any of these variables in any
+   release and the rules below will stop applying without an error.
+   ========================================================================== */
+
+/* --- panel / subview transitions ---------------------------------------- */
+:root {
+  --panelui-subview-transition-duration: 0ms !important;
+  --panelui-subview-transition-duration-slow: 0ms !important;
+  --panelui-fade-duration: 0ms !important;
+}
+
+/* Menus, context menus, panels: no fade, no slide */
+menupopup,
+panel,
+tooltip,
+.panel-arrow {
+  animation-duration: 0ms !important;
+  animation-delay: 0ms !important;
+  transition-duration: 0ms !important;
+  transition-delay: 0ms !important;
+}
+
+/* --- tabs --------------------------------------------------------------- */
+/* Tab open/close/move animations and the hover transition */
+.tabbrowser-tab {
+  transition: none !important;
+}
+.tab-close-button {
+  transition: none !important;
+}
+
+/* --- small draw-time wins ----------------------------------------------- */
+/* Stop the compositor from keeping a separate layer alive for the titlebar */
+#titlebar {
+  will-change: auto !important;
+}
+
+/* Toolbar autohide bookmarks growth animation, if you use it */
+#PersonalToolbar {
+  transition: none !important;
+}
