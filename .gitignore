@@ -1,0 +1,14 @@
+# local profile backups written by the install script
+prefs-backup-*.js
+user.js.bak
+*.bak
+
+# OS noise
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# editors
+.vscode/
+.idea/
+*.swp
