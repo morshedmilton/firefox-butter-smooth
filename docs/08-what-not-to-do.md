@@ -33,7 +33,7 @@ forward. The prefs were correct then. Firefox is now a different engine.
 |---|---|
 | `browser.startup.preXULSkeletonUI = false` "speeds up launch" | That pref *enables* the Windows skeleton window, which draws a cheap frame while the real UI loads. Turning it off makes launch feel **slower**, because there's no early paint. **Keep it `true`.** |
 | `media.ffvpx.enabled = false` "forces GPU decoding" | It disables Firefox's bundled FFmpeg decoders for VP8/VP9/AV1 and some audio. On Windows, VP9 doesn't route through the OS decoder in the general case, so you mostly lose your fallback path — you do not gain hardware decode. **Leave it `true`.** |
-| `layout.frame_rate = 360` "matches your monitor" | `-1` already means "follow the display". Pinning an integer takes the compositor off the vsync/VRR path, which produces judder and tearing on high-refresh panels — at 360 Hz it also caps you at whatever number you typed. **Leave it `-1`.** |
+| `layout.frame_rate = 360` "matches your monitor" | `-1` already means "follow the display". Pinning an integer takes the compositor off the vsync/VRR path, which produces judder and tearing on high-refresh panels — and caps you at whatever number you typed. **Leave it `-1`.** |
 | "Disable all animations to speed up rendering" | CSS animations run on the compositor; they cost the GPU almost nothing. Killing them changes *feel*, not frame budget. Fine as a taste choice — dishonest as a performance claim. |
 
 The skeleton-UI one is the giveaway that a list was generated rather than tested: it reads as "disable early
@@ -41,11 +41,11 @@ paint to start faster", which isn't a thing.
 
 ---
 
-## Class 3 — Real pref, wrong value for this machine
+## Class 3 — Real pref, wrong value for your machine
 
 | Advice | Problem here |
 |---|---|
-| `dom.ipc.processCount = 16` (or "as high as possible") | 16 GB RAM. More content processes means more resident memory, more tab reloads, and swap. 12 is the ceiling on this box. |
+| `dom.ipc.processCount = 16` (or "as high as possible") | 16 GB RAM. More content processes means more resident memory, more tab reloads, and swap. 12 is the ceiling on 16 GB. |
 | `gfx.canvas.accelerated.cache-size = 4096` (MB) | That's 4 GB of VRAM reserved for canvas on an 8 GB card — it starves textures and video decode. 512 is the sane ceiling. |
 | `mousewheel.min_line_scroll_amount = 30` as a universal truth | Taste, and panel-dependent. On a 60 Hz panel it feels twitchy. Keep it, but know what it is. |
 | "Set every smooth-scroll value to the maximum" | `durationMaxMS = 0` removes smoothing entirely; `currentVelocityWeighting = 1` makes it feel laggy. These values interact. |
@@ -93,9 +93,9 @@ can't undo is a rumour.
 
 ---
 
-## Appendix: the exact file I started from
+## Appendix: a real generated user.js, audited
 
-This is the `user.js` that was actually running in the beta profile on this laptop — ten prefs, four comments, no
+This is a `user.js` that turned up in a Firefox beta profile — ten prefs, four comments, no
 source. It is labelled Betterfox; Betterfox is 700+ lines maintained by someone who tracks Mozilla's changes.
 This is a ten-line imitation of it.
 
@@ -152,7 +152,7 @@ credit.**
 
 ## The short version
 
-Things that genuinely helped on this machine: refresh rate, GPU choice, driver present method, extension diet,
+Things that genuinely helped: refresh rate, GPU choice, driver present method, extension diet,
 12 content processes, and a handful of paint/scroll prefs.
 
 Everything else in the list I started from was either dead, backwards, or noise.

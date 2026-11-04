@@ -1,13 +1,13 @@
 <div align="center">
-  <img src="assets/hero.svg" width="100%" alt="Firefox, but butter-smooth — a tuning guide for a Dell G15 5530 with a 360 Hz panel and an RTX 4060">
+  <img src="assets/hero.svg" width="100%" alt="Firefox, but butter-smooth — a tuning guide for Windows machines with two GPUs">
 </div>
 
 <div align="center">
 
 ![Firefox](https://img.shields.io/badge/Firefox-160_Beta-FF7139?style=for-the-badge&logo=firefoxbrowser&logoColor=white)
 ![Windows](https://img.shields.io/badge/Windows-11-0078D4?style=for-the-badge&logo=windows11&logoColor=white)
-![GPU](https://img.shields.io/badge/RTX-4060_Laptop-76B900?style=for-the-badge&logo=nvidia&logoColor=white)
-![Display](https://img.shields.io/badge/display-360_Hz-8B5CF6?style=for-the-badge&logoColor=white)
+![GPU](https://img.shields.io/badge/GPU-hybrid_iGPU_%2B_dGPU-76B900?style=for-the-badge&logo=nvidia&logoColor=white)
+![Display](https://img.shields.io/badge/refresh-60_to_360_Hz-8B5CF6?style=for-the-badge&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-3FB950?style=for-the-badge)
 
 </div>
@@ -16,7 +16,7 @@
 
 <div align="center">
   <b>Ten steps, ranked by what actually moved the needle.</b><br>
-  <sub>Each with pros, cons, an honest impact rating and a one-line undo. Plus the audit of the pref list I started with — six of its ten lines never ran.</sub>
+  <sub>Each with pros, cons, an honest impact rating and a one-line undo. Plus a line-by-line audit of a generated pref list — six of its ten lines never ran.</sub>
 </div>
 
 ---
@@ -25,22 +25,30 @@
 
 | | Do this | Where | Gain |
 |:-:|:--|:--|:--|
-| **1** | Confirm **360 Hz** — not 240, not 60 | `Settings → Display → Advanced display` | 🔥🔥🔥 |
-| **2** | Point `firefox.exe` at the **RTX 4060** | `Settings → Display → Graphics` | 🔥🔥 |
+| **1** | Confirm the panel is at its **max refresh rate** — not 60 | `Settings → Display → Advanced display` | 🔥🔥🔥 |
+| **2** | Point `firefox.exe` at the **dedicated GPU** | `Settings → Display → Graphics` | 🔥🔥 |
 | **3** | **DXGI swapchain** present method | NVIDIA Control Panel → Firefox | 🔥 kills the flicker |
 | **4** | **One** content blocker — uBlock Origin | Firefox → Add-ons | 🔥 less jank |
 
-> **If you only do one thing:** make sure the panel is really running at 360 Hz. Everything else on this page is polishing a **2.78 ms** frame budget.
+> **If you only do one thing:** make sure the panel is really running at its maximum refresh rate. Everything else on this page is polishing a frame budget measured in single-digit milliseconds.
 
-### What a 2.78 ms budget actually means
+### What your frame budget actually is
 
-At 360 Hz the compositor has 2.78 ms per frame. Miss it and you drop a frame — and at 360 Hz a dropped frame is twice as visible as at 180, because the interval you missed is half as long.
+| Your panel | Frame budget |
+|:-:|:-:|
+| 60 Hz | 16.7 ms |
+| 144 Hz | 6.9 ms |
+| 165 Hz | 6.1 ms |
+| 240 Hz | 4.2 ms |
+| 360 Hz | 2.8 ms |
+
+The higher the refresh rate, the less slack you get. At 60 Hz a 4 ms main-thread block disappears into the budget. At 240 Hz it is most of a frame. On a 360 Hz panel it is a visible stutter.
 
 That reframes the whole guide:
 
-- An extension that blocks the main thread for 4 ms used to be invisible at 60 Hz. Here it is a stutter.
-- Twelve content processes matter more than they look: less per-process work means less chance of a 3 ms hitch.
-- `layout.frame_rate` must stay at `-1`. Pinning it to 360 takes the compositor off the vsync path, which is where judder and tearing come from.
+- An extension that blocks the main thread for a few ms is invisible at 60 Hz and obvious on a high-refresh panel.
+- Content process count matters more than it looks: less per-process work means less chance of a multi-millisecond hitch.
+- `layout.frame_rate` must stay at `-1`. Pinning it to a number takes the compositor off the vsync path, which is where judder and tearing come from.
 
 ---
 
@@ -57,7 +65,7 @@ That reframes the whole guide:
 This is the whole reason steps 1–3 exist. In hybrid (Advanced Optimus) mode, Windows picks the GPU per program, and a browser usually gets the iGPU:
 
 <div align="center">
-  <img src="assets/frame-path.svg" width="100%" alt="Frame path: Firefox content process to the compositor, then Windows chooses the GPU — Intel UHD by default, RTX 4060 when set to High performance, both feeding the 360 Hz panel">
+  <img src="assets/frame-path.svg" width="100%" alt="Frame path: Firefox content process to the compositor, then Windows chooses the GPU — the integrated one by default, the dedicated one when set to High performance, both feeding the panel">
 </div>
 
 And when it still stutters, this is the order that finds the cause:
@@ -68,34 +76,33 @@ And when it still stutters, this is the order that finds the cause:
 
 ---
 
-## 🖥️ The machine
+## 🖥️ Where the numbers come from
+
+Every rating on this page was measured on one machine. It is a reference point, not a requirement — nothing here is tuned to that hardware, and each step says how to size it for yours.
 
 | | |
 |:--|:--|
-| **Laptop** | Dell G15 5530 |
-| **CPU** | Intel Core i7-13650HX — 14 cores / 20 threads |
-| **GPU** | NVIDIA GeForce RTX 4060 Laptop (8 GB) + Intel UHD Graphics |
-| **Display mode** | Automatic MUX / Advanced Optimus (hybrid) |
-| **Panel** | AUO, 1920 × 1080, **360 Hz** (max = current = 360) |
-| **RAM** | 16 GB |
-| **Browser** | Firefox 160.0 Beta, x64 en-US, build 20261102 |
-| **Install** | `D:\Softwares\Firefox Beta\firefox.exe` |
+| **Type** | gaming laptop, hybrid graphics (Advanced Optimus) |
+| **GPU** | dGPU + iGPU pair — any such pair behaves the same way |
+| **Panel** | 1920 × 1080 at 360 Hz → 2.78 ms frame budget |
+| **RAM / CPU** | 16 GB, 14 cores / 20 threads |
+| **Browser** | Firefox 160.0 Beta — prefs move, your build may differ |
 
-> 1080p at 360 Hz needs DisplayPort 1.4 with DSC, or the internal eDP link. If Windows only offers 240 Hz, that's a cable or link-bandwidth limit — not a Firefox problem, and no pref will fix it.
+> Higher refresh rates need more link bandwidth. 1080p at 360 Hz fits DisplayPort 1.4 and internal eDP, but not HDMI 2.0 (which tops out near 240 Hz at that resolution). If Windows offers less than your panel's spec, check the cable and port before blaming Firefox.
 
 ---
 
 ## 🪜 The ten steps
 
-Each step carries two badges: **impact** on this machine, and **risk** to you.
+Each step carries two badges: **impact** in practice, and **risk** to you.
 
-### 01 · Run the panel at 360 Hz
+### 01 · Run the panel at its maximum refresh rate
 
 ![impact](https://img.shields.io/badge/impact-highest-FF5C2B?style=flat-square) ![risk](https://img.shields.io/badge/risk-none-3FB950?style=flat-square)
 
 **Why:** the compositor can only draw as fast as the panel is clocked. Windows drops back to 60 Hz after driver updates, dock changes and display-mode switches, and it never tells you.
 
-**Do:** `Win + I` → **System → Display → Advanced display** → **Choose a refresh rate** → `360 Hz`.
+**Do:** `Win + I` → **System → Display → Advanced display** → **Choose a refresh rate** → pick the highest listed (60 / 120 / 144 / 165 / 240 / 360 — whatever your panel and cable allow).
 
 | ✅ Pros | ⚠️ Cons |
 |:--|:--|
@@ -107,17 +114,17 @@ Each step carries two badges: **impact** on this machine, and **risk** to you.
 
 ---
 
-### 02 · Point Firefox at the RTX 4060
+### 02 · Point Firefox at the dedicated GPU
 
 ![impact](https://img.shields.io/badge/impact-big-FF8A3D?style=flat-square) ![risk](https://img.shields.io/badge/risk-battery-E2A336?style=flat-square)
 
 **Why:** a browser is assumed to be a battery-friendly app and gets the iGPU. Forcing the dGPU gives Firefox the fill rate for compositing, canvas and video decode.
 
-**Do:** `Win + I` → **System → Display → Graphics** → **Browse** → `D:\Softwares\Firefox Beta\firefox.exe` → **Options** → **High performance** → **Save**.
+**Do:** `Win + I` → **System → Display → Graphics** → **Browse** → `C:\Program Files\Mozilla Firefox\firefox.exe` (or wherever yours lives) → **Options** → **High performance** → **Save**.
 
 | ✅ Pros | ⚠️ Cons |
 |:--|:--|
-| Removes the biggest stutter source on hybrid laptops | Battery life drops — the 4060 idles higher than the UHD |
+| Removes the biggest stutter source on hybrid laptops | Battery life drops — the dGPU idles higher than the iGPU |
 | Makes hardware decode and GPU raster actually reachable | More heat, fans sooner |
 | No registry, no driver mods | Games now share a busier GPU |
 
@@ -137,7 +144,7 @@ Each step carries two badges: **impact** on this machine, and **risk** to you.
 |:--|:--|:--|
 | Preferred graphics processor | High-performance NVIDIA processor | belt and braces with step 2 |
 | Power management mode | Prefer maximum performance | stops clock ramping between frames |
-| Max Frame Rate | Off, or `360` | never let a background app get capped to 20–30 |
+| Max Frame Rate | Off, or = your panel Hz | never let a background app get capped to 20–30 |
 | Vulkan/OpenGL present method | **Prefer layered on DXGI Swapchain** | the actual fix for black-flash-on-alt-tab |
 | Vertical sync | Use the 3D application setting | forcing Off tears |
 
@@ -157,7 +164,7 @@ Each step carries two badges: **impact** on this machine, and **risk** to you.
 
 **Why:** every pref list jumps to `about:config` and skips the GUI that actually owns the process model. `dom.ipc.processCount` is ignored while "Use recommended performance settings" is ticked.
 
-**Do:** `about:preferences` → **General → Performance** → uncheck **Use recommended performance settings** → keep **Use hardware acceleration when available** checked → **Content process limit = 12**.
+**Do:** `about:preferences` → **General → Performance** → uncheck **Use recommended performance settings** → keep **Use hardware acceleration when available** checked → **Content process limit** = `8` by default, `12` if you have 16 GB or more.
 
 | ✅ Pros | ⚠️ Cons |
 |:--|:--|
@@ -177,7 +184,7 @@ Each step carries two badges: **impact** on this machine, and **risk** to you.
 
 | Pref | Set to | What it does |
 |:--|:-:|:--|
-| `gfx.canvas.accelerated.cache-size` | `512` | VRAM budget for canvas, MB (default 256) |
+| `gfx.canvas.accelerated.cache-size` | `512` | VRAM budget for canvas, MB (256 default; keep 256 on 4 GB cards) |
 | `gfx.webrender.software` | `false` | refuse software compositing |
 | `gfx.direct2d.disabled` | `false` | keep Direct2D on |
 | `dom.ipc.processCount` | `12` | content processes for 20 threads |
@@ -289,7 +296,7 @@ mousewheel.min_line_scroll_amount                30
 
 ![impact](https://img.shields.io/badge/impact-zero_frames,_all_the_truth-39465C?style=flat-square) ![risk](https://img.shields.io/badge/risk-none-3FB950?style=flat-square)
 
-**Why:** otherwise every placebo feels like a win. At 360 Hz you can see a single dropped frame, so the tools pay for themselves.
+**Why:** otherwise every placebo feels like a win. On a high-refresh panel you can see a single dropped frame, so the tools pay for themselves.
 
 **Do:** `layers.acceleration.draw-fps = true` for an on-screen frame counter → `about:support` → **Graphics** must say `WebRender` → `about:processes` for the culprit tab → [profiler.firefox.com](https://profiler.firefox.com) for the *why*.
 
@@ -309,8 +316,8 @@ Same laptop, two different goals. Pick a column, not a compromise.
 
 | Setting | 🔌 Plugged in | 🔋 On battery |
 |:--|:--|:--|
-| Panel refresh | **360 Hz** | 60 Hz, or let Windows decide |
-| GPU for Firefox | High performance (RTX) | Let Windows decide |
+| Panel refresh | your panel's max | 60 Hz, or let Windows decide |
+| GPU for Firefox | High performance (dGPU) | Let Windows decide |
 | NVIDIA power management | Prefer maximum performance | Optimal power |
 | `dom.ipc.processCount` | 12 | 8 |
 | `gfx.canvas.accelerated.cache-size` | 512 | 256 |
@@ -327,9 +334,9 @@ Steps 1–3 flip by hand in about 30 seconds. Everything in 5–9 is cheap enoug
   <img src="assets/audit.svg" width="100%" alt="Audit of ten prefs: one backwards, one harmful, three dead, two noise, three useful">
 </div>
 
-The `user.js` actually running on this laptop was 13 lines labelled "Betterfox". Six of its ten prefs never ran a line of code, one made launching slower, and one asked an 8 GB card for a 4 GB canvas cache.
+A 13-line `user.js` labelled "Betterfox" turned up in a Firefox beta profile. Six of its ten prefs never ran a line of code, one made launching slower, and one asked an 8 GB card for a 4 GB canvas cache.
 
-It still felt faster — because the same session also set the GPU preference and the refresh rate. **The pref list took the credit.** The full line-by-line audit, plus every common no-op, is in **[docs/08](docs/08-what-not-to-do.md#appendix-the-exact-file-i-started-from)**.
+It still felt faster — because the same session also set the GPU preference and the refresh rate. **The pref list took the credit.** The full line-by-line audit, plus every common no-op, is in **[docs/08](docs/08-what-not-to-do.md#appendix-a-real-generated-userjs-audited)**.
 
 ---
 

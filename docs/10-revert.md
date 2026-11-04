@@ -75,7 +75,7 @@ If the profile is beyond reasoning with:
 4. **NVIDIA:** Control Panel → Manage 3D Settings → Program Settings → Firefox → **Remove**
 5. **G-Sync:** Display → Set up G-SYNC → reset to default
 6. **Power plan:** `powercfg.cpl` → Balanced
-7. **Thermal mode:** Dell/MyDell → back to Balanced
+7. **Thermal mode:** your OEM utility (Dell, Asus, Lenovo, MSI…) → back to Balanced
 
 None of this touches the Firefox profile, and none of it requires admin rights except HAGS.
 

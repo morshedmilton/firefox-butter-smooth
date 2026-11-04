@@ -14,19 +14,19 @@ Order matters: refresh rate → GPU choice → driver profile → power policy.
 | What you see | What it means |
 |---|---|
 | 60 Hz only | the panel is capped by a power plan, or you are on an external display that cannot do more |
-| 60 / 240 / 360 | Pick **360**. This is the one. |
+| 60 / 120 / 144 / 165 / 240 / 360 | Pick the highest offered. Higher refresh = smaller frame budget. |
 | A "Dynamic refresh rate" toggle | Lets Windows drop to 60 Hz on battery. Nice for power, can feel inconsistent while scrolling |
 
-This panel reports **1920 × 1080 at 360 Hz** (internal AUO eDP). At 360 Hz a frame lasts **2.78 ms** — that is the
-budget the compositor, the content processes and every extension share. It is why this guide cares about 3 ms
-stalls that would be invisible at 60 Hz.
+A 165 Hz panel gives you **6.1 ms** per frame; a 360 Hz panel gives **2.78 ms**. That budget is shared by the
+compositor, the content processes and every extension — which is why this guide cares about 3 ms stalls that
+would be invisible at 60 Hz.
 
 Two failure modes worth knowing:
 
 - **Only 60 Hz offered.** Usually a driver reinstall: Windows falls back to the generic monitor driver and hides
-the high-refresh modes. Reinstall the Intel/NVIDIA driver, then re-check.
-- **Capped at 240 Hz.** Link bandwidth, not Firefox. 1080p at 360 Hz fits DisplayPort 1.4 and internal eDP, but
-not HDMI 2.0 (which tops out near 240 Hz at this resolution). Check cable and port before blaming the browser.
+the high-refresh modes. Reinstall the GPU driver, then re-check.
+- **Capped below what the panel supports.** Link bandwidth, not Firefox. 1080p at 360 Hz fits DisplayPort 1.4 and
+internal eDP, but not HDMI 2.0 (which tops out near 240 Hz at that resolution). Check cable and port first.
 
 **Verify, don't assume.** After a driver update or a dock, Windows can silently go back to 60 Hz. Check this
 first whenever the browser "suddenly feels worse" — it is almost always this.
@@ -35,7 +35,7 @@ first whenever the browser "suddenly feels worse" — it is almost always this.
 
 ## 1.2 Which GPU gets Firefox
 
-`Win + I` → **System → Display → Graphics** → **Browse** → `D:\Softwares\Firefox Beta\firefox.exe` →
+`Win + I` → **System → Display → Graphics** → **Browse** → `C:\Program Files\Mozilla Firefox\firefox.exe` →
 **Options** → **High performance** → **Save**.
 
 This is a Windows per-app preference. It is respected regardless of what the NVIDIA driver would have chosen,
@@ -46,12 +46,12 @@ and it applies to the whole process tree Firefox spawns (content processes, GPU 
 In hybrid mode:
 
 ```
-app  ->  RTX 4060 renders  ->  frames copied to  ->  Intel iGPU  ->  panel
+app  ->  dGPU renders  ->  frames copied to  ->  iGPU  ->  panel
 ```
 
 The copy is the price of hybrid graphics. Forcing Firefox onto the dGPU does not remove that copy — it only
-changes *which* GPU does the rendering. What you gain is the RTX's fill rate for compositing, canvas, WebGL
-and video decode. What you pay is idle power: the 4060 does not reach the iGPU's idle floor.
+changes *which* GPU does the rendering. What you gain is the dGPU's fill rate for compositing, canvas, WebGL
+and video decode. What you pay is idle power: the dGPU does not reach the iGPU's idle floor.
 
 ### When *not* to do this
 
@@ -107,7 +107,7 @@ a variable-refresh panel — see [08](08-what-not-to-do.md).
 
 ---
 
-## 1.5 Power policy (this laptop specifically)
+## 1.5 Power policy (gaming laptops)
 
 `Win + R` → `powercfg.cpl` → **Power Options**.
 
@@ -118,7 +118,7 @@ a variable-refresh panel — see [08](08-what-not-to-do.md).
 | Ultimate Performance | hides on most laptops; adds heat for no latency win |
 | Power saver | caps the CPU hard; scrolling gets worse, not better |
 
-On a 13650HX in a G15 chassis the bottleneck is **thermal headroom**, not power limits. Raising the power
+On a high-power HX-class CPU in a slim gaming chassis the bottleneck is **thermal headroom**, not power limits. Raising the power
 ceiling buys a few hundred MHz for a few seconds and then the fan curve takes it back. If you want sustained
 smoothness, the useful knobs are:
 
@@ -133,7 +133,7 @@ smoothness, the useful knobs are:
 
 ## Checklist
 
-- [ ] Panel at **360 Hz**, verified in Settings
+- [ ] Panel at its **maximum refresh rate**, verified in Settings
 - [ ] `firefox.exe` set to High performance (plugged-in profile)
 - [ ] HAGS on, then profiled for regressions
 - [ ] NVIDIA program profile created, present method = DXGI swapchain

@@ -83,7 +83,7 @@ here renders a frame faster.
 
 Order of operations if scrolling feels wrong:
 
-1. Is the panel actually at 360 Hz? ([01](01-windows-and-driver.md))
+1. Is the panel actually at its maximum refresh rate? ([01](01-windows-and-driver.md))
 2. Is `about:support` showing `WebRender`?
 3. Is an extension injecting CSS into every page? ([06](06-extensions.md))
 4. Only then start moving the numbers above, one at a time.

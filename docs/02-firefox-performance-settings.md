@@ -24,13 +24,13 @@ That is not a setting problem — see [09-troubleshooting](09-troubleshooting.md
 ## 2.2 How many content processes?
 
 Each content process costs roughly 120–250 MB resident once a page is loaded, more on heavy sites. Firefox's
-default is 8. This machine: 14 cores / 20 threads, 16 GB.
+default is 8. The reference machine had 20 threads and 16 GB — an ordinary gaming laptop.
 
 | Limit | Processes | Rough RAM ceiling | Verdict |
 |---|---|---|---|
 | 4 | 4 | ~1 GB | for 8 GB machines, or battery saving |
 | 8 | 8 | ~2 GB | **default; correct for most people** |
-| 12 | 12 | ~3 GB | **this machine, plugged in** |
+| 12 | 12 | ~3 GB | **16 GB or more, plugged in** |
 | 16+ | 16+ | ~4 GB+ | returns nothing; raises the chance of swap |
 
 Processes are not threads: 12 processes on 20 threads still leaves the compositor and GPU process room. Past
@@ -50,12 +50,12 @@ This block is the ground truth. Open `about:support`, scroll to **Graphics**.
 |---|---|---|
 | `Compositing` | `WebRender` | `WebRender (Software)` |
 | `WebRender` | `true` | `false` |
-| `GPU #1` | your RTX 4060 | only the Intel UHD |
+| `GPU #1` | your dGPU | only the iGPU |
 | `GPU #2` | Intel UHD | absent |
 | `Driver Version` | current branch | anything from 2024 |
 | `Failure Log` / `Decision Log` | empty or informative | `blocklisted`, `ANGLE_...`, `NO_CONSTANT_BUFFER_OFFSETTING` |
 
-`WebRender (Software)` means: no GPU compositing, every frame rasterised on the CPU. On a 13650HX that still
+`WebRender (Software)` means: no GPU compositing, every frame rasterised on the CPU. On a modern HX-class CPU that still
 works, which is why people live with it for months without noticing — the browser just feels heavy. If you see
 it, fix that before touching a single pref.
 

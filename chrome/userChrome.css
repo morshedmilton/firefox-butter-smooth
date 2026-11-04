@@ -8,7 +8,7 @@
    Restart Firefox completely (all windows) after editing.
 
    What this is: Firefox's menu and panel animations are tuned for 60 Hz
-   displays. On a 360 Hz panel that fade reads as input lag. Killing the
+   displays. On a high-refresh panel that fade reads as input lag. Killing the
    durations makes menus appear on the same frame you click.
 
    What this is NOT: a performance fix. It changes perceived latency, not

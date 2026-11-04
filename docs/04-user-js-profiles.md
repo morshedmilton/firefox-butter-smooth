@@ -88,23 +88,23 @@ See what it found without changing anything:
 ### Why the choice of profile is not obvious
 
 `profiles.ini` can disagree with itself, and it usually does on a machine that has run more than one Firefox
-channel. Real example from this laptop:
+channel. A typical two-channel layout:
 
 ```ini
 [Profile0]
 Name=default-beta
-Path=Profiles/rrvij9rw.default-beta        <- the one the Beta install actually uses
+Path=Profiles/abcd1234.default-beta        <- the one the Beta install actually uses
 
 [Profile1]
 Name=default
-Path=Profiles/y6k8mjd1.default
+Path=Profiles/efgh5678.default
 Default=1                                   <- the one the profile picker calls default
 
 [InstallB16F9810555E63E5]
-Default=Profiles/rrvij9rw.default-beta      <- and this is the binding that wins
+Default=Profiles/abcd1234.default-beta      <- and this is the binding that wins
 ```
 
-A script that trusts `Default=1` configures the wrong browser on this machine — silently. Firefox resolves the
+A script that trusts `Default=1` configures the wrong browser on a two-channel machine — silently. Firefox resolves the
 `[Install<hash>]` binding first, so the installer does the same, prints which binding it used, and refuses to guess
 when more than one install is present.
 

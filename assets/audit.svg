@@ -12,7 +12,7 @@
   <rect width="1280" height="400" fill="#0B1220"/>
   <rect width="1280" height="400" fill="none" stroke="#FFFFFF" stroke-opacity="0.06"/>
 
-  <text x="56" y="58" fill="#FFFFFF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="26" font-weight="800">The user.js I started with, audited line by line</text>
+  <text x="56" y="58" fill="#FFFFFF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="26" font-weight="800">A generated user.js, audited line by line</text>
   <text x="56" y="84" fill="#8FA0BF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15">Ten prefs labelled "Betterfox". Six of them never ran a line of code.</text>
 
   <g font-family="Segoe UI, Helvetica, Arial, sans-serif">
@@ -116,5 +116,5 @@
   <rect x="874" y="292" width="350" height="18" rx="9" fill="#3FB950"/>
 
   <text x="56" y="344" fill="#8FA0BF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">It still felt faster — because the same session also set the GPU preference and the refresh rate. The pref list took the credit.</text>
-  <text x="56" y="368" fill="#6F7F99" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">Audit source: docs/08-what-not-to-do.md · profile rrvij9rw.default-beta · Firefox 160.0 Beta</text>
+  <text x="56" y="368" fill="#6F7F99" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">Audit source: docs/08-what-not-to-do.md · one Firefox beta profile</text>
 </svg>

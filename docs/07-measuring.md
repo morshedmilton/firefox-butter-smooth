@@ -21,7 +21,7 @@ FPS 163  ...
 - **Turn it off when you're done.** It costs a little, and it is drawn on top of everything including video.
 
 **How to read it:** ignore the peak. Watch whether it *sits at* your panel rate and whether it drops in the
-same place every time. A drop to 200 on one site is a page problem. Constant 60 on a 360 Hz panel is a
+same place every time. A drop on one site is a page problem. Constant 60 on a high-refresh panel is a
 configuration problem — go back to [01](01-windows-and-driver.md).
 
 ---
@@ -33,7 +33,7 @@ The ground truth for "am I actually on the GPU". Check before and after step 2:
 | Field | Before | After |
 |---|---|---|
 | `Compositing` | `WebRender` | `WebRender` |
-| `GPU #1` | Intel UHD | NVIDIA RTX 4060 |
+| `GPU #1` | the iGPU | the dGPU |
 | `Vendor ID` | `0x8086` (Intel) | `0x10de` (NVIDIA) |
 | `WebRender` | `true` | `true` |
 
@@ -97,8 +97,8 @@ powercfg /batteryreport /output "$env:USERPROFILE\battery.html"
 Gives design capacity, current capacity, and estimated life. Compare a normal 30-minute browsing session on the
 plugged-in profile vs the battery profile.
 
-Rough expectation on this machine: forcing the RTX for a browser costs a visible chunk of battery — the 4060's
-idle floor is simply higher than the UHD's. That's the trade, and it's why the README has two profiles instead
+Rough expectation: forcing the dGPU for a browser costs a visible chunk of battery — its
+idle floor is simply higher than the iGPU's. That's the trade, and it's why the README has two profiles instead
 of one "best" list.
 
 ---

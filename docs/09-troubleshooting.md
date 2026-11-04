@@ -8,7 +8,7 @@ Symptoms first, causes second. Every fix here is reversible; if it doesn't help,
 
 The browser has fallen back to CPU compositing. Nothing else you tune will matter until this is fixed.
 
-1. **Driver.** Update the NVIDIA driver from NVIDIA directly, not through Windows Update. On this laptop use a
+1. **Driver.** Update the GPU driver from the vendor directly, not through Windows Update. Use a
    clean install ("Perform a clean installation" in the installer) if the version has been the same for a year.
 2. **GPU blocklisted by Firefox.** `about:support` → **Decision Log** will name the reason
    (`FEATURE_FAILURE_...`). The log is the diagnosis; don't guess.
@@ -58,7 +58,7 @@ Check the codec actually in use: YouTube → right-click → **Stats for nerds**
 ## Scrolling stutters on one specific site
 
 1. Does it stutter in a private window with extensions disabled? → an extension ([06](06-extensions.md))
-2. Does it stutter at 60 Hz but not 360 Hz? → refresh rate
+2. Does it stutter at 60 Hz but not at the panel's max? → refresh rate
 3. Profile the scroll: long **Frame** markers with the page's own JS on the stack means the site, not you.
 4. Sites with sticky headers, `backdrop-filter`, and scroll-linked animations are simply expensive. Nothing in
    `about:config` fixes them.
@@ -95,8 +95,8 @@ The most common causes, in order:
 3. **The driver got reinstalled** by Windows Update → back to the iGPU, back to software composition. Check
    `about:support` first, always.
 
-**Beta channel note:** this machine runs Firefox 160 Beta. Betas are where prefs get renamed first. If a step
-worked on 159 and stopped on 160, suspect the pref, not the hardware.
+**Beta channel note:** if you run a Beta build, prefs get renamed there first. If a step
+worked one release and stopped the next, suspect the pref, not the hardware.
 
 ---
 

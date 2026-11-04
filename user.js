@@ -1,8 +1,9 @@
 // =============================================================================
 //  firefox-butter-smooth · user.js
 //
-//  For: Dell G15 5530 · i7-13650HX (14C/20T) · RTX 4060 Laptop · 16 GB
-//  Tested on: Firefox 160.0 Beta (build 20261102), Windows x64
+//  Tested on: Firefox 160.0 Beta, Windows 11 x64, one 16 GB hybrid-GPU laptop
+//  Values that depend on RAM (process count, canvas cache) are annotated - scale
+//  them for your machine; everything else is hardware-independent.
 //
 //  WHERE THIS GOES
 //    about:support -> "Profile Folder" -> Open Folder -> drop this file there.
