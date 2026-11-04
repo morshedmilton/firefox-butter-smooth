@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" width="1280" height="400" role="img" aria-label="Audit of the ten Firefox preferences that were actually installed: three dead, one backwards, one harmful, two noise, three useful">
+  <defs>
+    <linearGradient id="sum" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#A32A3C"/>
+      <stop offset="0.34" stop-color="#E5484D"/>
+      <stop offset="0.52" stop-color="#E2A336"/>
+      <stop offset="0.72" stop-color="#4A5568"/>
+      <stop offset="1" stop-color="#3FB950"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="400" fill="#0B1220"/>
+  <rect width="1280" height="400" fill="none" stroke="#FFFFFF" stroke-opacity="0.06"/>
+
+  <text x="56" y="58" fill="#FFFFFF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="26" font-weight="800">The user.js I started with, audited line by line</text>
+  <text x="56" y="84" fill="#8FA0BF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15">Ten prefs labelled "Betterfox". Six of them never ran a line of code.</text>
+
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif">
+    <!-- cell 1: backwards -->
+    <g>
+      <rect x="56" y="112" width="110" height="104" rx="10" fill="#E5484D" fill-opacity="0.16" stroke="#E5484D" stroke-opacity="0.65"/>
+      <text x="68" y="134" fill="#FF8A8E" font-size="11" font-weight="700">LINE 2</text>
+      <text x="68" y="158" fill="#F3D6D7" font-size="12" font-weight="600">preXUL</text>
+      <text x="68" y="174" fill="#F3D6D7" font-size="12" font-weight="600">SkeletonUI</text>
+      <text x="68" y="200" fill="#FF8A8E" font-size="11" font-weight="700">BACKWARDS</text>
+    </g>
+    <!-- cell 2: noise -->
+    <g>
+      <rect x="178" y="112" width="110" height="104" rx="10" fill="#E2A336" fill-opacity="0.14" stroke="#E2A336" stroke-opacity="0.55"/>
+      <text x="190" y="134" fill="#F0C574" font-size="11" font-weight="700">LINE 3</text>
+      <text x="190" y="158" fill="#F1E3C6" font-size="12" font-weight="600">notify</text>
+      <text x="190" y="174" fill="#F1E3C6" font-size="12" font-weight="600">interval</text>
+      <text x="190" y="200" fill="#F0C574" font-size="11" font-weight="700">NOISE</text>
+    </g>
+    <!-- cell 3: harmful -->
+    <g>
+      <rect x="300" y="112" width="110" height="104" rx="10" fill="#A32A3C" fill-opacity="0.22" stroke="#C33A50" stroke-opacity="0.7"/>
+      <text x="312" y="134" fill="#F09AA8" font-size="11" font-weight="700">LINE 4</text>
+      <text x="312" y="158" fill="#F2D5DA" font-size="12" font-weight="600">canvas</text>
+      <text x="312" y="174" fill="#F2D5DA" font-size="12" font-weight="600">cache 4096</text>
+      <text x="312" y="200" fill="#F09AA8" font-size="11" font-weight="700">HARMFUL</text>
+    </g>
+    <!-- cell 4: dead -->
+    <g>
+      <rect x="422" y="112" width="110" height="104" rx="10" fill="#4A5568" fill-opacity="0.28" stroke="#4A5568" stroke-opacity="0.8"/>
+      <text x="434" y="134" fill="#9FB0C9" font-size="11" font-weight="700">LINE 5</text>
+      <text x="434" y="158" fill="#CBD5E4" font-size="12" font-weight="600">azure</text>
+      <text x="434" y="174" fill="#CBD5E4" font-size="12" font-weight="600">backends</text>
+      <text x="434" y="200" fill="#9FB0C9" font-size="11" font-weight="700">DEAD</text>
+    </g>
+    <!-- cell 5: dead -->
+    <g>
+      <rect x="544" y="112" width="110" height="104" rx="10" fill="#4A5568" fill-opacity="0.28" stroke="#4A5568" stroke-opacity="0.8"/>
+      <text x="556" y="134" fill="#9FB0C9" font-size="11" font-weight="700">LINE 8</text>
+      <text x="556" y="158" fill="#CBD5E4" font-size="12" font-weight="600">remote</text>
+      <text x="556" y="174" fill="#CBD5E4" font-size="12" font-weight="600">autostart</text>
+      <text x="556" y="200" fill="#9FB0C9" font-size="11" font-weight="700">DEAD</text>
+    </g>
+    <!-- cell 6: dead -->
+    <g>
+      <rect x="666" y="112" width="110" height="104" rx="10" fill="#4A5568" fill-opacity="0.28" stroke="#4A5568" stroke-opacity="0.8"/>
+      <text x="678" y="134" fill="#9FB0C9" font-size="11" font-weight="700">LINE 9</text>
+      <text x="678" y="158" fill="#CBD5E4" font-size="12" font-weight="600">ping-centre</text>
+      <text x="678" y="174" fill="#CBD5E4" font-size="12" font-weight="600">telemetry</text>
+      <text x="678" y="200" fill="#9FB0C9" font-size="11" font-weight="700">DEAD</text>
+    </g>
+    <!-- cell 7: useful -->
+    <g>
+      <rect x="788" y="112" width="110" height="104" rx="10" fill="#3FB950" fill-opacity="0.14" stroke="#3FB950" stroke-opacity="0.6"/>
+      <text x="800" y="134" fill="#8BE29C" font-size="11" font-weight="700">LINE 10</text>
+      <text x="800" y="158" fill="#D8F3DE" font-size="12" font-weight="600">telemetry</text>
+      <text x="800" y="174" fill="#D8F3DE" font-size="12" font-weight="600">unified</text>
+      <text x="800" y="200" fill="#8BE29C" font-size="11" font-weight="700">USEFUL</text>
+    </g>
+    <!-- cell 8: useful -->
+    <g>
+      <rect x="910" y="112" width="110" height="104" rx="10" fill="#3FB950" fill-opacity="0.14" stroke="#3FB950" stroke-opacity="0.6"/>
+      <text x="922" y="134" fill="#8BE29C" font-size="11" font-weight="700">LINE 11</text>
+      <text x="922" y="158" fill="#D8F3DE" font-size="12" font-weight="600">telemetry</text>
+      <text x="922" y="174" fill="#D8F3DE" font-size="12" font-weight="600">enabled</text>
+      <text x="922" y="200" fill="#8BE29C" font-size="11" font-weight="700">USEFUL</text>
+    </g>
+    <!-- cell 9: noise -->
+    <g>
+      <rect x="1032" y="112" width="110" height="104" rx="10" fill="#E2A336" fill-opacity="0.14" stroke="#E2A336" stroke-opacity="0.55"/>
+      <text x="1044" y="134" fill="#F0C574" font-size="11" font-weight="700">LINE 12</text>
+      <text x="1044" y="158" fill="#F1E3C6" font-size="12" font-weight="600">experiments</text>
+      <text x="1044" y="174" fill="#F1E3C6" font-size="12" font-weight="600">supported</text>
+      <text x="1044" y="200" fill="#F0C574" font-size="11" font-weight="700">NEAR-NO-OP</text>
+    </g>
+    <!-- cell 10: useful -->
+    <g>
+      <rect x="1154" y="112" width="74" height="104" rx="10" fill="#3FB950" fill-opacity="0.14" stroke="#3FB950" stroke-opacity="0.6"/>
+      <text x="1162" y="134" fill="#8BE29C" font-size="11" font-weight="700">LINE 13</text>
+      <text x="1162" y="158" fill="#D8F3DE" font-size="12" font-weight="600">health</text>
+      <text x="1162" y="174" fill="#D8F3DE" font-size="12" font-weight="600">report</text>
+      <text x="1162" y="200" fill="#8BE29C" font-size="11" font-weight="700">USEFUL</text>
+    </g>
+  </g>
+
+  <!-- legend -->
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" fill="#AEBBD1">
+    <circle cx="62" cy="258" r="6" fill="#E5484D"/><text x="76" y="263">1 backwards</text>
+    <circle cx="192" cy="258" r="6" fill="#A32A3C"/><text x="206" y="263">1 harmful</text>
+    <circle cx="316" cy="258" r="6" fill="#4A5568"/><text x="330" y="263">3 dead</text>
+    <circle cx="412" cy="258" r="6" fill="#E2A336"/><text x="426" y="263">2 noise</text>
+    <circle cx="520" cy="258" r="6" fill="#3FB950"/><text x="534" y="263">3 useful</text>
+  </g>
+
+  <!-- summary bar -->
+  <rect x="56" y="292" width="1168" height="18" rx="9" fill="#141D2F"/>
+  <rect x="56" y="292" width="117" height="18" rx="9" fill="#A32A3C"/>
+  <rect x="173" y="292" width="117" height="18" fill="#E5484D"/>
+  <rect x="290" y="292" width="234" height="18" fill="#E2A336"/>
+  <rect x="524" y="292" width="350" height="18" fill="#4A5568"/>
+  <rect x="874" y="292" width="350" height="18" rx="9" fill="#3FB950"/>
+
+  <text x="56" y="344" fill="#8FA0BF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">It still felt faster — because the same session also set the GPU preference and the refresh rate. The pref list took the credit.</text>
+  <text x="56" y="368" fill="#6F7F99" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">Audit source: docs/08-what-not-to-do.md · profile rrvij9rw.default-beta · Firefox 160.0 Beta</text>
+</svg>

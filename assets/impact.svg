@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 620" width="1280" height="620" role="img" aria-label="Bar chart ranking ten Firefox tweaks by how much they changed the feel of the browser on this laptop">
+  <defs>
+    <linearGradient id="bHigh" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FF5C2B"/>
+      <stop offset="1" stop-color="#FFB36B"/>
+    </linearGradient>
+    <linearGradient id="bMid" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7C4DFF"/>
+      <stop offset="1" stop-color="#A98CFF"/>
+    </linearGradient>
+    <linearGradient id="bLow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#39465C"/>
+      <stop offset="1" stop-color="#55647E"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="620" fill="#0B1220"/>
+  <rect width="1280" height="620" fill="none" stroke="#FFFFFF" stroke-opacity="0.06"/>
+
+  <text x="56" y="62" fill="#FFFFFF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="28" font-weight="800">What actually moved the needle</text>
+  <text x="56" y="90" fill="#8FA0BF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15">Subjective weight from repeated use on this laptop — not a benchmark score. Bars are relative.</text>
+
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif">
+    <!-- rows -->
+    <g font-size="16" font-weight="600">
+      <text x="56" y="146" fill="#E7ECF7">1 · Panel at 360 Hz</text>
+      <rect x="470" y="132" width="620" height="20" rx="10" fill="#141D2F"/>
+      <rect x="470" y="132" width="620" height="20" rx="10" fill="url(#bHigh)"/>
+      <text x="1108" y="148" fill="#FFB08A" font-size="14">biggest</text>
+
+      <text x="56" y="190" fill="#E7ECF7">2 · Firefox on the RTX 4060</text>
+      <rect x="470" y="176" width="620" height="20" rx="10" fill="#141D2F"/>
+      <rect x="470" y="176" width="560" height="20" rx="10" fill="url(#bHigh)"/>
+      <text x="1048" y="192" fill="#FFB08A" font-size="14">big</text>
+
+      <text x="56" y="234" fill="#E7ECF7">3 · NVIDIA per-app profile</text>
+      <rect x="470" y="220" width="620" height="20" rx="10" fill="#141D2F"/>
+      <rect x="470" y="220" width="438" height="20" rx="10" fill="url(#bHigh)"/>
+      <text x="926" y="236" fill="#FFB08A" font-size="14">kills flicker</text>
+
+      <text x="56" y="278" fill="#E7ECF7">4 · Extension diet</text>
+      <rect x="470" y="264" width="620" height="20" rx="10" fill="#141D2F"/>
+      <rect x="470" y="264" width="420" height="20" rx="10" fill="url(#bHigh)"/>
+      <text x="908" y="280" fill="#FFB08A" font-size="14">removes jank</text>
+
+      <text x="56" y="322" fill="#E7ECF7">5 · Content processes 8 → 12</text>
+      <rect x="470" y="308" width="620" height="20" rx="10" fill="#141D2F"/>
+      <rect x="470" y="308" width="252" height="20" rx="10" fill="url(#bMid)"/>
+      <text x="740" y="324" fill="#C9B4FF" font-size="14">heavy tab sets</text>
+
+      <text x="56" y="366" fill="#E7ECF7">6 · The about:config dozen</text>
+      <rect x="470" y="352" width="620" height="20" rx="10" fill="#141D2F"/>
+      <rect x="470" y="352" width="240" height="20" rx="10" fill="url(#bMid)"/>
+      <text x="728" y="368" fill="#C9B4FF" font-size="14">small but real</text>
+
+      <text x="56" y="410" fill="#E7ECF7">7 · Permanent user.js</text>
+      <rect x="470" y="396" width="620" height="20" rx="10" fill="#141D2F"/>
+      <rect x="470" y="396" width="176" height="20" rx="10" fill="url(#bLow)"/>
+      <text x="664" y="412" fill="#9AA8C0" font-size="14">convenience</text>
+
+      <text x="56" y="454" fill="#E7ECF7">8 · userChrome.css</text>
+      <rect x="470" y="440" width="620" height="20" rx="10" fill="#141D2F"/>
+      <rect x="470" y="440" width="168" height="20" rx="10" fill="url(#bLow)"/>
+      <text x="656" y="456" fill="#9AA8C0" font-size="14">perceived</text>
+
+      <text x="56" y="498" fill="#E7ECF7">9 · Scroll physics</text>
+      <rect x="470" y="484" width="620" height="20" rx="10" fill="#141D2F"/>
+      <rect x="470" y="484" width="112" height="20" rx="10" fill="url(#bLow)"/>
+      <text x="600" y="500" fill="#9AA8C0" font-size="14">taste</text>
+
+      <text x="56" y="542" fill="#E7ECF7">10 · Measuring</text>
+      <rect x="470" y="528" width="620" height="20" rx="10" fill="#141D2F"/>
+      <rect x="470" y="528" width="10" height="20" rx="5" fill="url(#bLow)"/>
+      <text x="500" y="544" fill="#9AA8C0" font-size="14">zero frames, all the truth</text>
+    </g>
+  </g>
+
+  <rect x="56" y="578" width="1168" height="1" fill="#FFFFFF" fill-opacity="0.08"/>
+  <text x="56" y="602" fill="#6F7F99" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">The top four are system settings. Everything below them is Firefox configuration, and it is rounding error by comparison.</text>
+</svg>

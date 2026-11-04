@@ -1,357 +1,362 @@
-# Firefox Butter Smooth
+<div align="center">
+  <img src="assets/hero.svg" width="100%" alt="Firefox, but butter-smooth — a tuning guide for a Dell G15 5530 with a 360 Hz panel and an RTX 4060">
+</div>
 
-**A Firefox tuning guide that survived contact with reality.**
+<div align="center">
 
-An AI handed me a list of "make Firefox fly" tweaks. I applied all of them, then checked every line against the
-browser it was supposed to speed up. Of the ten prefs: three are dead, one is backwards, and one asks an 8 GB
-card for 4 GB of VRAM. Two of the four CSS rules reference variables that do not exist. [The audit is here.](docs/08-what-not-to-do.md#appendix-the-exact-file-i-started-from)
+![Firefox](https://img.shields.io/badge/Firefox-160_Beta-FF7139?style=for-the-badge&logo=firefoxbrowser&logoColor=white)
+![Windows](https://img.shields.io/badge/Windows-11-0078D4?style=for-the-badge&logo=windows11&logoColor=white)
+![GPU](https://img.shields.io/badge/RTX-4060_Laptop-76B900?style=for-the-badge&logo=nvidia&logoColor=white)
+![Display](https://img.shields.io/badge/display-360_Hz-8B5CF6?style=for-the-badge&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-3FB950?style=for-the-badge)
 
-What survived is in this repo: every step in order, with the pros and cons spelled out, what each change actually
-does, and a one-command way back.
+</div>
 
-- Status: works, tested on the hardware below
-- Scope: one laptop, one browser, no registry hacks, no cleaners, no snake oil
-- Reversible: yes — [docs/10-revert.md](docs/10-revert.md)
+<br>
+
+<div align="center">
+  <b>Ten steps, ranked by what actually moved the needle.</b><br>
+  <sub>Each with pros, cons, an honest impact rating and a one-line undo. Plus the audit of the pref list I started with — six of its ten lines never ran.</sub>
+</div>
 
 ---
 
-## The machine
+## ⚡ The 30-second version
+
+| | Do this | Where | Gain |
+|:-:|:--|:--|:--|
+| **1** | Confirm **360 Hz** — not 240, not 60 | `Settings → Display → Advanced display` | 🔥🔥🔥 |
+| **2** | Point `firefox.exe` at the **RTX 4060** | `Settings → Display → Graphics` | 🔥🔥 |
+| **3** | **DXGI swapchain** present method | NVIDIA Control Panel → Firefox | 🔥 kills the flicker |
+| **4** | **One** content blocker — uBlock Origin | Firefox → Add-ons | 🔥 less jank |
+
+> **If you only do one thing:** make sure the panel is really running at 360 Hz. Everything else on this page is polishing a **2.78 ms** frame budget.
+
+### What a 2.78 ms budget actually means
+
+At 360 Hz the compositor has 2.78 ms per frame. Miss it and you drop a frame — and at 360 Hz a dropped frame is twice as visible as at 180, because the interval you missed is half as long.
+
+That reframes the whole guide:
+
+- An extension that blocks the main thread for 4 ms used to be invisible at 60 Hz. Here it is a stutter.
+- Twelve content processes matter more than they look: less per-process work means less chance of a 3 ms hitch.
+- `layout.frame_rate` must stay at `-1`. Pinning it to 360 takes the compositor off the vsync path, which is where judder and tearing come from.
+
+---
+
+## 📊 What actually moved the needle
+
+<div align="center">
+  <img src="assets/impact.svg" width="100%" alt="Bar chart ranking the ten tweaks by impact: refresh rate, GPU choice and the NVIDIA profile at the top; userChrome.css and scroll physics at the bottom">
+</div>
+
+---
+
+## 🧭 Where the frames go
+
+This is the whole reason steps 1–3 exist. In hybrid (Advanced Optimus) mode, Windows picks the GPU per program, and a browser usually gets the iGPU:
+
+```mermaid
+flowchart LR
+    A["Firefox content process"] --> B["Compositor · WebRender"]
+    B --> C{"Windows picks the GPU"}
+    C -->|"default: save power"| D["Intel UHD"]
+    C -->|"High performance"| E["RTX 4060"]
+    D --> F["Panel · 360 Hz"]
+    E --> F
+    classDef neutral fill:#141d2f,stroke:#55647e,color:#c9d2e3
+    classDef bad fill:#3b1620,stroke:#E5484D,color:#ffd7da
+    classDef good fill:#0f2a18,stroke:#3FB950,color:#d6f5de
+    class A,B,C,F neutral
+    class D bad
+    class E good
+```
+
+And when it still stutters, this is the order that finds the cause:
+
+```mermaid
+flowchart TD
+    S["It feels stuttery"] --> R{"Panel at 360 Hz?"}
+    R -->|no| R1["Display → Advanced display"]:::fix
+    R -->|yes| C{"about:support: WebRender?"}
+    C -->|"WebRender (Software)"| C1["Driver + blocklist log"]:::fix
+    C -->|yes| G{"GPU #1 is the RTX?"}
+    G -->|no| G1["Graphics → High performance"]:::fix
+    G -->|yes| X{"Clean profile, no extensions?"}
+    X -->|no| X1["Extension diet · docs/06"]:::fix
+    X -->|yes| P["Profile the scroll · docs/07"]:::last
+    classDef fix fill:#3b1620,stroke:#E5484D,color:#ffd7da
+    classDef last fill:#0f2a18,stroke:#3FB950,color:#d6f5de
+```
+
+---
+
+## 🖥️ The machine
 
 | | |
-|---|---|
-| Laptop | Dell G15 5530 |
-| CPU | Intel Core i7-13650HX — 14 cores / 20 threads |
-| GPU | NVIDIA GeForce RTX 4060 Laptop (8 GB) + Intel UHD Graphics |
-| Display mode | **Automatic MUX / Advanced Optimus** (hybrid) |
-| RAM | 16 GB |
-| Panel | 1920 × 1080 *(5530 shipped with 120 Hz or 165 Hz panels — check yours)* |
-| Browser | Firefox 160.0 Beta, x64 en-US, build 20261102 |
-| Install path | `D:\Softwares\Firefox Beta\firefox.exe` |
+|:--|:--|
+| **Laptop** | Dell G15 5530 |
+| **CPU** | Intel Core i7-13650HX — 14 cores / 20 threads |
+| **GPU** | NVIDIA GeForce RTX 4060 Laptop (8 GB) + Intel UHD Graphics |
+| **Display mode** | Automatic MUX / Advanced Optimus (hybrid) |
+| **Panel** | AUO, 1920 × 1080, **360 Hz** (max = current = 360) |
+| **RAM** | 16 GB |
+| **Browser** | Firefox 160.0 Beta, x64 en-US, build 20261102 |
+| **Install** | `D:\Softwares\Firefox Beta\firefox.exe` |
 
-> Why the GPU matters here: in hybrid mode the RTX renders and the iGPU hands the frames to the panel.
-> Windows decides which GPU a program gets, and by default it may pick the Intel chip for a browser "to save
-> power". That decision is the single biggest cause of the micro-stutter people blame Firefox for.
+> 1080p at 360 Hz needs DisplayPort 1.4 with DSC, or the internal eDP link. If Windows only offers 240 Hz, that's a cable or link-bandwidth limit — not a Firefox problem, and no pref will fix it.
 
 ---
 
-## Read this before you change anything
+## 🪜 The ten steps
 
-Three uncomfortable truths that shaped this guide:
+Each step carries two badges: **impact** on this machine, and **risk** to you.
 
-1. **Refresh rate beats every pref.** If Windows is running your panel at 60 Hz, no `about:config` value will
-   make scrolling feel like 165 Hz. Step 1 is one click and worth more than steps 5–9 combined.
-2. **Most pref lists online are from 2019.** Firefox was rewritten underneath them (WebRender, Fission, GPU
-   process isolation). Prefs like `layers.acceleration.force-enabled` were load-bearing once and are now no-ops.
-   The browser silently ignores prefs that no longer exist — you get a placebo, not an error.
-3. **"Smooth" is frame *pacing*, not average FPS.** A steady 60 feels better than 140 with hitches. Which is
-   why [Step 10](#step-10--measure-instead-of-guessing) exists.
+### 01 · Run the panel at 360 Hz
 
----
+![impact](https://img.shields.io/badge/impact-highest-FF5C2B?style=flat-square) ![risk](https://img.shields.io/badge/risk-none-3FB950?style=flat-square)
 
-## What to expect
+**Why:** the compositor can only draw as fast as the panel is clocked. Windows drops back to 60 Hz after driver updates, dock changes and display-mode switches, and it never tells you.
 
-Ranked by how much it actually changed the feel of the browser on this machine:
+**Do:** `Win + I` → **System → Display → Advanced display** → **Choose a refresh rate** → `360 Hz`.
 
-| # | Change | Real impact | Risk | Time |
-|---|--------|-------------|------|------|
-| 1 | Run the panel at its true refresh rate | 🔥🔥🔥 biggest | none | 1 min |
-| 2 | Point Firefox at the RTX 4060 | 🔥🔥 big on hybrid graphics | battery drain | 2 min |
-| 3 | NVIDIA per-app profile | 🔥 medium, kills flicker | none | 2 min |
-| 4 | Extension diet (uBlock Origin only) | 🔥 medium, removes jank | none | 5 min |
-| 5 | Content processes 8 → 12 | 🌗 small, heavy tab sets only | RAM | 1 min |
-| 6 | The 12 `about:config` prefs that still exist | 🌗 small but real | low | 5 min |
-| 7 | Permanent `user.js` profile | = step 6, but sticky | locks your prefs | 2 min |
-| 8 | `userChrome.css` snappy menus | 🌗 perceived only | cosmetic breakage | 5 min |
-| 9 | Scroll physics | 🌗 pure taste | none | 2 min |
-| 10 | Measuring | 0 impact, 100% honesty | none | 10 min |
+| ✅ Pros | ⚠️ Cons |
+|:--|:--|
+| Biggest single improvement available, and free | More idle power; a 360 Hz panel is thirsty |
+| Fixes stutter in *every* app, not just Firefox | Some panels downclock on battery by design |
+| One click, instantly reversible | You will notice 60 Hz forever afterwards |
 
-Steps 1–4 are where the win is. Everything after that is polishing.
+**↩️ Undo:** pick `60 Hz` in the same dropdown.
 
 ---
 
-## Step 1 — Run the panel at its real refresh rate
+### 02 · Point Firefox at the RTX 4060
 
-**Why:** the compositor can only draw as fast as the panel is clocked. Windows frequently drops back to 60 Hz
-after a driver update, a dock, or a display-mode switch, and nothing tells you.
+![impact](https://img.shields.io/badge/impact-big-FF8A3D?style=flat-square) ![risk](https://img.shields.io/badge/risk-battery-E2A336?style=flat-square)
 
-**Do:**
-1. `Win + I` → **System → Display → Advanced display**
-2. **Choose a refresh rate** → pick the highest value offered (120 / 144 / 165)
-3. While you're there: note the value, because this is the number you'll compare against later
+**Why:** a browser is assumed to be a battery-friendly app and gets the iGPU. Forcing the dGPU gives Firefox the fill rate for compositing, canvas and video decode.
 
-**✅ Pros**
-- Largest single improvement available, and it's free
-- Fixes stutter in every application, not just Firefox
-- Instantly reversible
+**Do:** `Win + I` → **System → Display → Graphics** → **Browse** → `D:\Softwares\Firefox Beta\firefox.exe` → **Options** → **High performance** → **Save**.
 
-**⚠️ Cons**
-- Higher idle power; a 165 Hz panel on battery costs real wattage
-- Some panels downclock themselves on battery anyway (that is the OEM's power policy, not a bug)
+| ✅ Pros | ⚠️ Cons |
+|:--|:--|
+| Removes the biggest stutter source on hybrid laptops | Battery life drops — the 4060 idles higher than the UHD |
+| Makes hardware decode and GPU raster actually reachable | More heat, fans sooner |
+| No registry, no driver mods | Games now share a busier GPU |
 
-**Verdict:** do it now, before touching Firefox.
+**↩️ Undo:** same screen → **Let Windows decide**.
 
 ---
 
-## Step 2 — Point Firefox at the RTX 4060
+### 03 · NVIDIA Control Panel: one profile, two fixes
 
-**Why:** with Advanced Optimus, Windows keeps a per-program GPU preference. A browser is usually assumed to be
-a battery-friendly app and gets the iGPU. Forcing the dGPU gives Firefox the full fill rate for scrolling,
-compositing, canvas and video decode.
+![impact](https://img.shields.io/badge/impact-medium-8B5CF6?style=flat-square) ![risk](https://img.shields.io/badge/risk-none-3FB950?style=flat-square)
 
-**Do:**
-1. `Win + I` → **System → Display → Graphics**
-2. **Browse** → `D:\Softwares\Firefox Beta\firefox.exe`
-3. Click **Firefox** → **Options** → **High performance** → **Save**
-4. (Optional) **Change default graphics settings** → enable **Hardware-accelerated GPU scheduling**, reboot
+**Why:** Windows decides *which* GPU; the driver decides *how*. Its default power management lets clocks fall between frames, and on Optimus it can pick the wrong present path and flicker.
 
-**✅ Pros**
-- Removes the biggest stutter source on hybrid laptops
-- Makes hardware video decode and GPU rasterisation actually reachable
-- No registry, no driver mods
-
-**⚠️ Cons**
-- Battery life drops noticeably — the 4060 idles at a higher floor than the iGPU
-- More heat, so the fans spin up sooner on a chassis that is already thermally honest
-- If you play on battery, your game now shares a busy GPU with the browser
-
-**Verdict:** keep it while plugged in. On battery, set this back to **Let Windows decide** — see
-[two profiles](#two-profiles-plugged-in-vs-battery).
-
----
-
-## Step 3 — NVIDIA Control Panel: one profile, two fixes
-
-**Why:** the Windows setting decides *which* GPU. The NVIDIA driver decides *how* that GPU behaves, and its
-default power management lets the clock fall to idle between frames. On Optimus laptops it can also get the
-present method wrong and flicker when Windows switches display modes.
-
-**Do:** NVIDIA Control Panel → **Manage 3D Settings → Program Settings → Add → Mozilla Firefox**:
+**Do:** `Manage 3D Settings → Program Settings → Add → Mozilla Firefox`:
 
 | Setting | Value | Why |
-|---|---|---|
-| Preferred graphics processor | High-performance NVIDIA processor | belted *and* braced with step 2 |
-| Power management mode | Prefer maximum performance | stops clock ramping between scroll frames |
-| Max Frame Rate | Off, or = panel Hz | never let a background app get capped to 20–30 |
-| Vulkan/OpenGL present method | Prefer layered on DXGI Swapchain | the actual fix for the black-flash-on-alt-tab |
+|:--|:--|:--|
+| Preferred graphics processor | High-performance NVIDIA processor | belt and braces with step 2 |
+| Power management mode | Prefer maximum performance | stops clock ramping between frames |
+| Max Frame Rate | Off, or `360` | never let a background app get capped to 20–30 |
+| Vulkan/OpenGL present method | **Prefer layered on DXGI Swapchain** | the actual fix for black-flash-on-alt-tab |
+| Vertical sync | Use the 3D application setting | forcing Off tears |
 
-**✅ Pros**
-- The DXGI present method is what kills the classic Optimus flicker
-- Per-program: your other apps keep normal power behaviour
-- Survives driver updates better than registry tweaks
+| ✅ Pros | ⚠️ Cons |
+|:--|:--|
+| The DXGI present method kills the classic Optimus flicker | Max-performance keeps the GPU clocked up: hotter idle |
+| Per-program, so other apps keep normal power behaviour | On some driver branches DXGI breaks full-screen games — keep it Firefox-only |
+| Survives driver updates better than registry hacks | One more thing to redo after a clean install |
 
-**⚠️ Cons**
-- "Prefer maximum performance" keeps the GPU clocked up — hotter idle, shorter battery
-- Panel-specific: on some driver versions the DXGI option makes full-screen games worse, so keep it Firefox-only
-
-**Verdict:** worth it for the flicker fix alone. Skip *power management mode* if you care about battery.
+**↩️ Undo:** NVIDIA CP → Firefox → **Remove**.
 
 ---
 
-## Step 4 — Firefox's own Performance panel (the step everyone forgets)
+### 04 · Firefox's own Performance panel
 
-**Why:** every list jumps straight to `about:config` and skips the GUI that actually controls the process model.
+![impact](https://img.shields.io/badge/impact-small-55647E?style=flat-square) ![risk](https://img.shields.io/badge/risk-none-3FB950?style=flat-square)
 
-**Do:** `about:preferences` → **General → Performance**
-1. Uncheck **Use recommended performance settings**
-2. Make sure **Use hardware acceleration when available** is checked
-3. **Content process limit** → `8` default, `12` on this CPU/RAM combo
+**Why:** every pref list jumps to `about:config` and skips the GUI that actually owns the process model. `dom.ipc.processCount` is ignored while "Use recommended performance settings" is ticked.
 
-**✅ Pros**
-- The only supported, documented way to change the process limit
-- Unchecking "recommended" is what makes the limit stick
-- Costs nothing, breaks nothing
+**Do:** `about:preferences` → **General → Performance** → uncheck **Use recommended performance settings** → keep **Use hardware acceleration when available** checked → **Content process limit = 12**.
 
-**⚠️ Cons**
-- More content processes = more RAM. 12 processes on 16 GB is comfortable; 16 is not
-- Turning hardware acceleration *off* here is a common self-own after a driver bug — remember to turn it back on
+| ✅ Pros | ⚠️ Cons |
+|:--|:--|
+| The only supported way to change the process limit | More processes = more RAM (~3 GB of content at 12) |
+| Costs nothing, breaks nothing | Turning hardware accel *off* here is a common self-own |
+| Makes the limit survive a restart | 16 is past the point of returns on 16 GB |
 
-**Verdict:** do this before `about:config`, not after. Full detail: [docs/02](docs/02-firefox-performance-settings.md).
+**↩️ Undo:** re-tick **Use recommended performance settings**.
 
 ---
 
-## Step 5 — The `about:config` prefs that still exist
+### 05 · The `about:config` dozen
 
-**Why:** this is the part of the internet that is 60% placebo. These twelve are the ones I could actually
-justify — each one is explained, with its default, in [docs/03-about-config.md](docs/03-about-config.md).
+![impact](https://img.shields.io/badge/impact-small-55647E?style=flat-square) ![risk](https://img.shields.io/badge/risk-low-3FB950?style=flat-square)
 
-Type `about:config` in the address bar, accept the warning, search, change.
+**Why:** this is the 60%-placebo part of the internet. These twelve are the ones that still exist *and* do something. Full table with defaults and verdicts: **[docs/03](docs/03-about-config.md)**.
 
 | Pref | Set to | What it does |
-|---|---|---|
-| `gfx.canvas.accelerated.cache-size` | `512` | VRAM budget for canvas surfaces (default 256 MB) |
+|:--|:-:|:--|
+| `gfx.canvas.accelerated.cache-size` | `512` | VRAM budget for canvas, MB (default 256) |
 | `gfx.webrender.software` | `false` | refuse software compositing |
 | `gfx.direct2d.disabled` | `false` | keep Direct2D on |
 | `dom.ipc.processCount` | `12` | content processes for 20 threads |
 | `browser.tabs.unloadOnLowMemory` | `true` | collapse background tabs under pressure |
-| `browser.sessionstore.interval` | `60000` | write session state every 60 s instead of 15 s |
-| `nglayout.initialpaint.delay` | `0` | start painting immediately (default 5 ms) |
-| `nglayout.initialpaint.delay.composite` | `0` | same, for the compositor path |
-| `general.smoothScroll.msdPhysics.enabled` | `true` | the newer scroll physics model |
+| `browser.sessionstore.interval` | `60000` | session writes every 60 s, not 15 s |
+| `nglayout.initialpaint.delay` | `0` | paint immediately (default 5 ms) |
+| `nglayout.initialpaint.delay.composite` | `0` | same, compositor path |
+| `general.smoothScroll.msdPhysics.enabled` | `true` | newer scroll physics |
 | `media.hardware-video-decoding.enabled` | `true` | use the GPU's decoders |
-| `media.wmf.hevc.enabled` | `1` | HEVC through Media Foundation |
-| `layers.acceleration.draw-fps` | `true` | **temporary** — on-screen frame counter, for step 10 |
+| `media.wmf.hevc.enabled` | `1` | HEVC via Media Foundation |
+| `layers.acceleration.draw-fps` | `true` | **temporary** — FPS overlay, for step 10 |
 
-**✅ Pros**
-- Small, honest gains: a bit less latency at paint, a bit less disk churn, a way to *see* your frame rate
-- All reversible in the same panel; nothing persists outside the profile
+| ✅ Pros | ⚠️ Cons |
+|:--|:--|
+| Small honest gains: less paint latency, less disk churn | Several are unfeelable — you will not notice sessionstore |
+| All reversible in the same panel | Unsupported surface: Mozilla renames these freely |
+| One gives you a frame counter | Copying a stranger's list is how 300-line junk files happen |
 
-**⚠️ Cons**
-- Some are marginal — you will not feel `browser.sessionstore.interval`
-- `about:config` is unsupported surface: Mozilla can rename or drop any of these between releases
-- Copy-pasting a stranger's list (including mine) is how people end up with a 300-line `user.js` they can't debug
-
-**Verdict:** apply the table, skip the rest of the internet's list — and read
-[docs/08](docs/08-what-not-to-do.md) for the eight prefs that do nothing.
+**↩️ Undo:** right-click each row → **Reset**.
 
 ---
 
-## Step 6 — Make it permanent with `user.js` (optional)
+### 06 · Make it permanent with `user.js`
 
-**Why:** `about:config` edits live in `prefs.js` and survive updates, but a profile refresh wipes them. A
-`user.js` in the profile folder re-applies a known-good set at every start, which is also how you move the
-setup to a new machine.
+![impact](https://img.shields.io/badge/impact-convenience-39465C?style=flat-square) ![risk](https://img.shields.io/badge/risk-locks_prefs-E2A336?style=flat-square)
 
-**Do:** either run the script, or copy [`user.js`](user.js) into the profile folder
-(`about:support` → **Profile Folder → Open Folder**).
+**Why:** `about:config` edits survive updates but not a profile refresh. A `user.js` re-applies a known-good set at every start — and moves your setup to a new machine in one file.
+
+**Do:**
 
 ```powershell
 .\scripts\Install-FirefoxTune.ps1
 ```
 
-**✅ Pros**
-- Reproducible: same browser behaviour on any machine, in one file
-- Self-documenting — every line says why it is there
-- Delete the file and you are back to stock
+| ✅ Pros | ⚠️ Cons |
+|:--|:--|
+| Reproducible: same browser on any machine | **It overrides the UI** — change a pref and it reverts next launch |
+| Self-documenting: every line says why | One more thing to remember after a Firefox update |
+| Delete the file and you are back to stock | Dead prefs pile up silently |
 
-**⚠️ Cons**
-- **It overrides the UI.** Change a pref in `about:config` and it silently reverts next launch. This surprises
-  everyone once.
-- Adding prefs that don't exist in your build is harmless but useless
-- One more thing to remember after a Firefox update
-
-**Verdict:** use it if you reinstall often. Otherwise the manual table is less surprising.
-Deep dive: [docs/04-user-js-profiles.md](docs/04-user-js-profiles.md).
+**↩️ Undo:** delete `user.js` from the profile folder (or run `Restore-FirefoxTune.ps1`).
 
 ---
 
-## Step 7 — `userChrome.css`: snappier menus
+### 07 · `userChrome.css`: snappier menus
 
-**Why:** Firefox's panel and menu animations are tuned for 60 Hz displays. On 165 Hz they are pure latency.
+![impact](https://img.shields.io/badge/impact-perceived-39465C?style=flat-square) ![risk](https://img.shields.io/badge/risk-cosmetic-E2A336?style=flat-square)
+
+**Why:** panel and menu animations are tuned for 60 Hz. On 360 Hz that fade *is* the latency.
+
+**Do:** `about:config` → `toolkit.legacyUserProfileCustomizations.stylesheets` = `true`, then drop [`chrome/userChrome.css`](chrome/userChrome.css) into the profile's `chrome/` folder and restart.
+
+| ✅ Pros | ⚠️ Cons |
+|:--|:--|
+| Menus open on the frame you click | **Unsupported API** — breaks silently after UI updates |
+| Tabs stop fading | Parsed per window: a big stylesheet slows startup |
+| Pure CSS, no extension, no process | Can break panel positioning on mixed-DPI multi-monitor |
+
+**↩️ Undo:** delete the file, restart.
+
+---
+
+### 08 · Extension diet
+
+![impact](https://img.shields.io/badge/impact-real-FF8A3D?style=flat-square) ![risk](https://img.shields.io/badge/risk-none-3FB950?style=flat-square)
+
+**Why:** every extension injects code into pages. Content blockers and style injectors are the two that show up in scroll profiles.
 
 **Do:**
-1. `about:config` → `toolkit.legacyUserProfileCustomizations.stylesheets` → `true`
-2. In the profile folder, create `chrome\userChrome.css` (this repo has one: [`chrome/userChrome.css`](chrome/userChrome.css))
-3. Restart Firefox
 
-**✅ Pros**
-- Menus and panels open without the fade
-- Tab open/close has no transition delay
-- Pure CSS, no extension, no process
+- **One** blocker: uBlock Origin. Remove AdBlock, AdBlock Plus, Ghostery, Privacy Badger — two blockers means two filter passes per request.
+- Delete anything that injects CSS/DOM into every page: dark-mode forcers, font replacers, **"smooth scroll" extensions** (those reimplement scrolling in JS, outside APZ — always worse).
+- Keep filter lists lean.
 
-**⚠️ Cons**
-- **Unsupported API.** It breaks silently after UI updates and nobody owes you a fix
-- Only the first few milliseconds change; if menus feel slow, the cause is usually compositing, not animation
-- A large stylesheet is parsed on every window open — this is the one tweak that can make startup *slower*
+| ✅ Pros | ⚠️ Cons |
+|:--|:--|
+| Cheapest real CPU win in the list | One site will break and you'll blame the wrong thing |
+| Less memory, fewer timers, fewer mystery requests | Losing "redundancy" feels wrong and is free |
 
-**Verdict:** small, safe if you keep the file tiny. Not a performance fix.
-Detail: [docs/05-userchrome-css.md](docs/05-userchrome-css.md).
+**↩️ Undo:** reinstall whatever you removed.
 
 ---
 
-## Step 8 — Extension diet
+### 09 · Scroll feel (taste, not performance)
 
-**Why:** every extension is code injected into pages. Content blockers and style injectors are the two
-categories that show up in scroll profiles.
+![impact](https://img.shields.io/badge/impact-taste-39465C?style=flat-square) ![risk](https://img.shields.io/badge/risk-taste-E2A336?style=flat-square)
 
-**Do:**
-- One blocker only: **uBlock Origin**. Remove AdBlock, AdBlock Plus, Ghostery, Privacy Badger —
-  running two blockers means two full filter passes per request
-- Delete anything that injects CSS or DOM into every page (dark-mode forcers, font replacers,
-  "smooth scroll" extensions — those fight Firefox's native APZ and make things worse)
-- Keep filter lists lean; each list is a matching pass on every request
-
-**✅ Pros**
-- Cheapest real CPU win in the whole list
-- Fewer background timers, less memory, fewer mystery requests
-- One blocker also means one place to debug
-
-**⚠️ Cons**
-- Losing redundancy feels wrong but is free — uBO alone covers what the duplicates did
-- Some sites break without their ad-script and you'll blame the wrong thing
-
-**Verdict:** do it. Detail: [docs/06-extensions.md](docs/06-extensions.md).
-
----
-
-## Step 9 — Scroll feel (taste, not performance)
-
-**Why:** Firefox's stock wheel curve is deliberately damped. If it feels heavy, this is the dial.
+**Why:** Firefox's wheel curve is deliberately damped. Nothing here renders a frame faster — it changes the curve.
 
 ```js
-general.smoothScroll.msdPhysics.enabled            true
-general.smoothScroll.mouseWheel.durationMaxMS      300    // default 400
-general.smoothScroll.mouseWheel.durationMinMS      100    // default 200
-general.smoothScroll.currentVelocityWeighting      0      // no easing into the stop
-general.smoothScroll.stopDecelerationWeighting     0.82
-mousewheel.min_line_scroll_amount                  30
-apz.overscroll.enabled                             true
+general.smoothScroll.msdPhysics.enabled          true
+general.smoothScroll.mouseWheel.durationMaxMS    300   // default 400
+general.smoothScroll.mouseWheel.durationMinMS    100   // default 200
+general.smoothScroll.currentVelocityWeighting    0
+general.smoothScroll.stopDecelerationWeighting   0.82
+mousewheel.min_line_scroll_amount                30
 ```
 
-**✅ Pros**
-- Shorter, more direct scroll animation — feels like a native app
-- Costs nothing: it's arithmetic in the compositor
+| ✅ Pros | ⚠️ Cons |
+|:--|:--|
+| Shorter, more direct animation — feels native | No universal default; these are build- and taste-dependent |
+| Free: it's arithmetic in the compositor | On a 60 Hz laptop screen it can feel twitchy |
 
-**⚠️ Cons**
-- **No default is universal.** These values are build- and taste-dependent; copy them and scrolling may feel
-  twitchy on a 60 Hz panel
-- Nothing here makes rendering faster — it changes the curve, not the frame budget
-
-**Verdict:** adjust to taste, expect nothing in a benchmark. Detail: [docs/03](docs/03-about-config.md#scrolling).
+**↩️ Undo:** right-click → **Reset** per pref.
 
 ---
 
-## Step 10 — Measure instead of guessing
+### 10 · Measure instead of guessing
 
-**Why:** otherwise you're tuning by vibes, and every placebo will feel like a win.
+![impact](https://img.shields.io/badge/impact-zero_frames,_all_the_truth-39465C?style=flat-square) ![risk](https://img.shields.io/badge/risk-none-3FB950?style=flat-square)
 
-**Do:**
-1. `about:config` → `layers.acceleration.draw-fps` = `true` → on-screen FPS/frame-time counter
-2. `about:support` → **Graphics**: Compositing must say `WebRender`, not `WebRender (Software)`
-3. `about:processes` → who is eating CPU right now
-4. [profiler.firefox.com](https://profiler.firefox.com) → record 10 s of scrolling, look at the Compositor track
+**Why:** otherwise every placebo feels like a win. At 360 Hz you can see a single dropped frame, so the tools pay for themselves.
 
-**✅ Pros**
-- Turns "feels smoother" into a number you can compare
-- Catches the real problems (software compositing, one runaway tab) in seconds
-- Free, built in, no benchmark install
+**Do:** `layers.acceleration.draw-fps = true` for an on-screen frame counter → `about:support` → **Graphics** must say `WebRender` → `about:processes` for the culprit tab → [profiler.firefox.com](https://profiler.firefox.com) for the *why*.
 
-**⚠️ Cons**
-- The FPS overlay itself costs a little; don't leave it on
-- Numbers won't capture perceived latency — trust the profiler, then trust your hands
+| ✅ Pros | ⚠️ Cons |
+|:--|:--|
+| Turns "feels smoother" into a number | The overlay costs a little — don't leave it on |
+| Catches software compositing in seconds | Average FPS hides frame pacing; the profiler doesn't |
+| Free and built in | Numbers still can't measure perceived latency |
 
-**Verdict:** do this first and last. Detail: [docs/07-measuring.md](docs/07-measuring.md).
+**↩️ Undo:** `layers.acceleration.draw-fps = false`.
 
 ---
 
-## Two profiles: plugged in vs battery
+## 🔌 Two profiles: plugged in vs battery
 
-Same laptop, two very different goals. Pick the column, not the compromise.
+Same laptop, two different goals. Pick a column, not a compromise.
 
 | Setting | 🔌 Plugged in | 🔋 On battery |
-|---|---|---|
-| Panel refresh | max (165 Hz) | 60 Hz, or let Windows decide |
-| Windows GPU for Firefox | High performance (RTX) | Let Windows decide |
+|:--|:--|:--|
+| Panel refresh | **360 Hz** | 60 Hz, or let Windows decide |
+| GPU for Firefox | High performance (RTX) | Let Windows decide |
 | NVIDIA power management | Prefer maximum performance | Optimal power |
 | `dom.ipc.processCount` | 12 | 8 |
 | `gfx.canvas.accelerated.cache-size` | 512 | 256 |
 | uBlock Origin | on | on |
 | `userChrome.css` | on | on |
 
-Toggling steps 1–3 by hand is 30 seconds. Everything in steps 5–9 is cheap enough to leave alone.
+Steps 1–3 flip by hand in about 30 seconds. Everything in 5–9 is cheap enough to leave alone.
 
 ---
 
-## Install
+## 🧪 The audit (why this repo exists)
+
+<div align="center">
+  <img src="assets/audit.svg" width="100%" alt="Audit of ten prefs: one backwards, one harmful, three dead, two noise, three useful">
+</div>
+
+The `user.js` actually running on this laptop was 13 lines labelled "Betterfox". Six of its ten prefs never ran a line of code, one made launching slower, and one asked an 8 GB card for a 4 GB canvas cache.
+
+It still felt faster — because the same session also set the GPU preference and the refresh rate. **The pref list took the credit.** The full line-by-line audit, plus every common no-op, is in **[docs/08](docs/08-what-not-to-do.md#appendix-the-exact-file-i-started-from)**.
+
+---
+
+## 📦 Install
 
 ```powershell
 git clone https://github.com/morshedmilton/firefox-butter-smooth.git
@@ -359,59 +364,60 @@ cd firefox-butter-smooth
 .\scripts\Install-FirefoxTune.ps1
 ```
 
-The script finds your profile via `profiles.ini`, **backs up `prefs.js` first**, copies `user.js` and
-`chrome\userChrome.css`, and refuses to run while Firefox is open. No admin rights, no registry writes.
+The script finds your profile via `profiles.ini` (respecting the `[Install…]` binding, not just `Default=1`), refuses to run while Firefox is open, **backs up `prefs.js` first**, then copies `user.js` and `chrome\userChrome.css`.
 
-## Uninstall
+See what it would touch, without touching it:
+
+```powershell
+.\scripts\Install-FirefoxTune.ps1 -List
+```
+
+## ↩️ Uninstall
 
 ```powershell
 .\scripts\Restore-FirefoxTune.ps1
 ```
 
-Deletes `user.js`, disables `chrome\`, restores the newest `prefs.js` backup. Windows and NVIDIA settings are
-manual by design — [docs/10-revert.md](docs/10-revert.md) has the exact clicks.
+Renames `user.js` and the stylesheet aside, restores the newest `prefs.js` backup. Windows and NVIDIA settings are manual by design — **[docs/10](docs/10-revert.md)** has the exact clicks, in reverse order.
 
 ---
 
-## Repo map
+## 🗂️ Repo map
 
-```
-README.md                        this guide
-user.js                          the tuned profile, ~50 commented lines
-chrome/userChrome.css            snappy menus (optional)
-scripts/Install-FirefoxTune.ps1  profile detection + backup + install
-scripts/Restore-FirefoxTune.ps1  one-command undo
-docs/01-windows-and-driver.md    refresh rate, GPU choice, HAGS, power plans
-docs/02-firefox-performance-settings.md  the GUI step, done properly
-docs/03-about-config.md          every pref: default, value, verdict
-docs/04-user-js-profiles.md      how user.js works, and why it overrides you
-docs/05-userchrome-css.md        what the CSS can and cannot do
-docs/06-extensions.md            blocker hygiene, memory, tab pressure
-docs/07-measuring.md             FPS overlay, about:processes, profiler
-docs/08-what-not-to-do.md        the audit of the file I started from, plus every common no-op
-docs/09-troubleshooting.md       flicker, software rendering, video, crashes
-docs/10-revert.md                step-by-step undo
-```
+| File | What's in it |
+|:--|:--|
+| [`README.md`](README.md) | this page |
+| [`user.js`](user.js) | ~50 commented lines — the tuned profile |
+| [`chrome/userChrome.css`](chrome/userChrome.css) | 4 rules that actually exist in Firefox |
+| [`scripts/`](scripts) | install + restore, with backup and a running-Firefox guard |
+| [`assets/`](assets) | the hero, impact and audit graphics (hand-written SVG) |
+| [`docs/01`](docs/01-windows-and-driver.md) | refresh rate, GPU choice, HAGS, power plans |
+| [`docs/02`](docs/02-firefox-performance-settings.md) | the GUI step, done properly |
+| [`docs/03`](docs/03-about-config.md) | every pref: default, value, verdict |
+| [`docs/04`](docs/04-user-js-profiles.md) | how `user.js` works, and why it overrides you |
+| [`docs/05`](docs/05-userchrome-css.md) | what the CSS can and cannot do |
+| [`docs/06`](docs/06-extensions.md) | blocker hygiene, memory, tab pressure |
+| [`docs/07`](docs/07-measuring.md) | FPS overlay, `about:processes`, profiler |
+| [`docs/08`](docs/08-what-not-to-do.md) | the audit + every common no-op |
+| [`docs/09`](docs/09-troubleshooting.md) | flicker, software rendering, video, crashes |
+| [`docs/10`](docs/10-revert.md) | step-by-step undo |
 
 ---
 
-## What this repo is not
+## 🚫 What this is not
 
-- Not a privacy guide. `user.js` here is about frames, not fingerprints.
-- Not a benchmark. I did not A/B every pref under a stopwatch; the ranking above is what survived
-  repeated use on one machine, plus what `about:support` and the profiler confirmed.
-- Not permanent advice. Firefox 160 is a beta; prefs move. If a line here stops existing, delete that line.
+- **Not a privacy guide.** `user.js` here is about frames, not fingerprints.
+- **Not a benchmark.** The ranking is what survived repeated use on one machine, plus what `about:support` and the profiler confirmed. No stopwatches were harmed.
+- **Not permanent.** Firefox 160 is a beta; prefs move. If a line stops existing, delete that line.
 
-If a step didn't help on your machine, that's useful data — open an issue with your `about:support`
-**Graphics** block and panel refresh rate.
+If a step didn't help on your machine, that's useful data — open an issue with your `about:support` **Graphics** block and your panel refresh rate.
 
-## Credits
+## 🙏 Credits
 
-- [Betterfox](https://github.com/yokoffing/Betterfox) — the profile that proved this approach can be
-  maintained rather than copy-pasted; this repo's `user.js` is a much smaller, hardware-specific cousin
-- Mozilla's [Firefox Profiler](https://profiler.firefox.com) and the `about:support` page
-- NVIDIA's Advanced Optimus / DXGI present-method notes, which is where the flicker fix actually comes from
+- [Betterfox](https://github.com/yokoffing/Betterfox) — proof that a `user.js` can be maintained rather than copy-pasted. This repo's profile is a much smaller, hardware-specific cousin.
+- Mozilla's [Firefox Profiler](https://profiler.firefox.com) and the `about:support` page.
+- NVIDIA's Advanced Optimus notes, where the DXGI present-method fix actually comes from.
 
-## License
+## 📄 License
 
 MIT — see [LICENSE](LICENSE). Take it, cut it up, keep the parts that work for you.
