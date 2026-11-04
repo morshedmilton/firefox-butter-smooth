@@ -1,6 +1,6 @@
 # 02 — Firefox's own Performance settings
 
-`about:preferences` → **General** → scroll to **Performance**.
+`about:preferences` — or for normal humans: **☰ menu → Settings → General**, then scroll to **Performance**.
 
 This panel controls the process model. Every pref list online skips it and jumps to `about:config`, which is
 backwards: `dom.ipc.processCount` in `about:config` is ignored while "Use recommended performance settings" is

@@ -14,7 +14,7 @@ Order matters: refresh rate → GPU choice → driver profile → power policy.
 | What you see | What it means |
 |---|---|
 | 60 Hz only | the panel is capped by a power plan, or you are on an external display that cannot do more |
-| 60 / 120 / 144 / 165 / 240 / 360 | Pick the highest offered. Higher refresh = smaller frame budget. |
+| A list like 60 / 120 / 144 / 165 / 240 / 360 | Pick the highest offered — that's your panel's real maximum. |
 | A "Dynamic refresh rate" toggle | Lets Windows drop to 60 Hz on battery. Nice for power, can feel inconsistent while scrolling |
 
 A 165 Hz panel gives you **6.1 ms** per frame; a 360 Hz panel gives **2.78 ms**. That budget is shared by the

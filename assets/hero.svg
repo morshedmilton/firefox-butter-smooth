@@ -55,17 +55,17 @@
 
     <!-- chips -->
     <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="600">
-      <rect x="64" y="282" width="120" height="38" rx="19" fill="#FF7139" fill-opacity="0.14" stroke="#FF7139" stroke-opacity="0.55"/>
-      <text x="86" y="307" fill="#FFB08A">60–360 Hz</text>
+      <rect x="64" y="282" width="176" height="38" rx="19" fill="#FF7139" fill-opacity="0.14" stroke="#FF7139" stroke-opacity="0.55"/>
+      <text x="86" y="307" fill="#FFB08A">any refresh rate</text>
 
-      <rect x="196" y="282" width="128" height="38" rx="19" fill="#76B900" fill-opacity="0.14" stroke="#76B900" stroke-opacity="0.55"/>
-      <text x="218" y="307" fill="#B8E36A">hybrid GPU</text>
+      <rect x="252" y="282" width="132" height="38" rx="19" fill="#76B900" fill-opacity="0.14" stroke="#76B900" stroke-opacity="0.55"/>
+      <text x="274" y="307" fill="#B8E36A">hybrid GPU</text>
 
-      <rect x="336" y="282" width="150" height="38" rx="19" fill="#0071C5" fill-opacity="0.18" stroke="#0071C5" stroke-opacity="0.6"/>
-      <text x="358" y="307" fill="#8EC9F0">Windows 11</text>
+      <rect x="396" y="282" width="162" height="38" rx="19" fill="#0071C5" fill-opacity="0.18" stroke="#0071C5" stroke-opacity="0.6"/>
+      <text x="418" y="307" fill="#8EC9F0">Windows 10/11</text>
 
-      <rect x="498" y="282" width="164" height="38" rx="19" fill="#8B5CF6" fill-opacity="0.18" stroke="#8B5CF6" stroke-opacity="0.6"/>
-      <text x="520" y="307" fill="#C9B4FF">Firefox 160</text>
+      <rect x="570" y="282" width="142" height="38" rx="19" fill="#8B5CF6" fill-opacity="0.18" stroke="#8B5CF6" stroke-opacity="0.6"/>
+      <text x="592" y="307" fill="#C9B4FF">Firefox 115+</text>
     </g>
   </g>
 
@@ -75,9 +75,9 @@
     <circle r="104" fill="none" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="10"/>
     <circle r="104" fill="none" stroke="url(#gauge)" stroke-width="10" stroke-linecap="round"
             stroke-dasharray="653.5" stroke-dashoffset="65" transform="rotate(-90)"/>
-    <text x="0" y="-4" text-anchor="middle" fill="#FFFFFF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="30" font-weight="800">2.8–16.7</text>
+    <text x="0" y="-4" text-anchor="middle" fill="#FFFFFF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="30" font-weight="800">1000 / Hz</text>
     <text x="0" y="18" text-anchor="middle" fill="#FF9A6B" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="2">MS PER FRAME</text>
-    <text x="0" y="46" text-anchor="middle" fill="#8FA0BF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12">60 → 360 Hz</text>
+    <text x="0" y="46" text-anchor="middle" fill="#8FA0BF" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12">your panel sets it</text>
   </g>
 
   <rect x="0" y="408" width="1280" height="8" fill="url(#rail)"/>
